@@ -29,26 +29,18 @@ def create_app(test_config = None):
     def admin_loader(dni):
         return Administrador.query.get(str(dni))
 
-    @app.route('/')
-    def home():
-        return jsonify({'Component': 'Home'})
-
-    @app.route('/register')
-    def register():
-        return jsonify({'Component': 'Register'})
-
     @app.route('/register/register_admin', methods=["POST"])
     def register_admin():
         error = False
         response = {}
 
         try:
-            dni_admin = request.get_json()['dni_admin']
+            dni_admin = request.get_json()['dni']
             nombres = request.get_json()['nombres']
             apellidos = request.get_json()['apellidos']
             correo = request.get_json()['correo']
             password = request.get_json()['password']
-            confirm_password = request.get_json()['confirm_password']
+            confirm_password = request.get_json()['cpassword']
 
             hashed = generate_password_hash(password)
 
@@ -80,10 +72,6 @@ def create_app(test_config = None):
             abort(500)
         else:
             return jsonify(response)
-
-    @app.route('/login')
-    def login():
-        return jsonify({'Component': 'login'})
 
 
     @app.route('/login/log_admin', methods=["POST"])
