@@ -6,8 +6,13 @@ db = SQLAlchemy()
 
 database_path = 'postgresql://ucyhwjueiddyap:d4b568b45f2d21b0d5439543ea3fe7d3560f75ec2799e780897de62bb3752379@ec2-3-224-164-189.compute-1.amazonaws.com:5432/d3kru7fbguascq'
 
-def setup_db(app, database_path = database_path):
+# Host: ec2-3-224-164-189.compute-1.amazonaws.com
+# Database: d3kru7fbguascq
+# User: ucyhwjueiddyap
+# Port: 5432
+# Password: d4b568b45f2d21b0d5439543ea3fe7d3560f75ec2799e780897de62bb3752379
 
+def setup_db(app, database_path = database_path):
     app.config['SQLALCHEMY_DATABASE_URI'] = database_path
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app

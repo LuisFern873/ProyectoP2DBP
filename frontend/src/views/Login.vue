@@ -33,9 +33,6 @@
 </template>
 
 <script>
-
-import axios from "axios";
-
 export default {
   name: "Login",
   data() {
@@ -46,14 +43,26 @@ export default {
     };
   },
   methods: {
-    handleSubmit(event) {
+    async handleSubmit(event) {
       event.preventDefault();
+
+      const path = "http://127.0.0.1:5000/login/log_admin";
+
+      const response = await fetch(path, {
+        method: "POST",
+        body: JSON.stringify({
+          dni: this.dni,
+          password: this.password,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      let data = await response.json();
+
       console.log("You are logged in!");
-      console.log("Your DNI: ", this.dni);
-      console.log("Your password: ", this.password);
-
-      const path = '';
-
+      console.log("Response: ", response);
+      console.log("Data: ", data);
     },
   },
 };
