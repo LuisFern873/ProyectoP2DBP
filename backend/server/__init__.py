@@ -37,18 +37,18 @@ def create_app(test_config = None):
     def register():
         return jsonify({'Component': 'Register'})
 
-    @app.route('/register/register_admin', methods=["POST","GET"])
+    @app.route('/register/register_admin', methods=["POST"])
     def register_admin():
         error = False
         response = {}
 
         try:
-            dni_admin = request.get_json()["dni_admin"]
-            nombres = request.get_json()["nombres"]
-            apellidos = request.get_json()["apellidos"]
-            correo = request.get_json()["correo"]
-            password = request.get_json()["password"]
-            confirm_password = request.get_json()["confirm_password"]
+            dni_admin = request.get_json()['dni_admin']
+            nombres = request.get_json()['nombres']
+            apellidos = request.get_json()['apellidos']
+            correo = request.get_json()['correo']
+            password = request.get_json()['password']
+            confirm_password = request.get_json()['confirm_password']
 
             hashed = generate_password_hash(password)
 
@@ -62,7 +62,7 @@ def create_app(test_config = None):
                 db.session.add(admin)
                 db.session.commit()
                 response['mensaje'] = 'success'
-                response['nombres'] = admin.nombres
+                response['admin'] = admin.format()
             else:
                 response['mensaje'] = '¡Confirme correctamente su contraseña!'
 
@@ -72,6 +72,7 @@ def create_app(test_config = None):
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(exp).__name__, exp.args)
             print(message)
+            
         finally:
             db.session.close()
 
@@ -84,29 +85,34 @@ def create_app(test_config = None):
     def login():
         return jsonify({'Component': 'login'})
 
-    @app.route('/login/log_admin', methods=["POST","GET"])
+
+    @app.route('/login/log_admin', methods=["POST"])
+    @cross_origin()
     def log_admin():
         response = {}
         error = False
 
-        dni_admin = request.get_json()["dni_admin_login"]
-        password = request.get_json()["password_login"]
-
         try:
+            dni_admin = request.get_json()['dni']
+            password = request.get_json()['password']
             admin = Administrador.query.filter_by(dni_admin = dni_admin).first()
 
             if admin is not None and check_password_hash(admin.password, password):
-                response['mensaje'] = 'success'
                 login_user(admin)
+                response['success'] = True
+                response['admin'] = admin.format()
             else:
-                response['mensaje'] = '¡Combinación DNI/contraseña inválida!'
+                response['success'] = False
+                response['message'] = 'Incorrect dni/password combination'
 
         except Exception as exp:
             error = True
-            response['mensaje'] = 'Exception is raised'
+            response['error'] = True
+            response['message'] = 'Exception is raised'
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(exp).__name__, exp.args)
             print(message)
+
         if error:
             abort(500)
         else:
