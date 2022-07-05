@@ -13,8 +13,12 @@
       </section>
 
       <div class="botones">
-        <button class="button-19" role="button">Iniciar Sesión</button>
-        <button class="button-18" role="button">Regístrate</button>
+        <router-link to="/login">
+          <button class="button-19" role="button">Iniciar Sesión</button>
+        </router-link>
+        <router-link to="/register">
+          <button class="button-18" role="button">Regístrate</button>
+        </router-link>
       </div>
     </div>
   </header>

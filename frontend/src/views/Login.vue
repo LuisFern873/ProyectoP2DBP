@@ -61,6 +61,18 @@ export default {
       let data = await response.json();
       console.log("Response: ", response);
       console.log("Data: ", data);
+
+      if (data["success"]) {
+        this.$router.push({
+          name: "empleados",
+          params: {
+            nombres: data["admin"]["nombres"],
+            apellidos: data["admin"]["apellidos"],
+          },
+        });
+      } else {
+        console.log("Autentication failed: ", data);
+      }
     },
   },
 };

@@ -4,13 +4,14 @@ from datetime import datetime
 
 db = SQLAlchemy()
 
-database_path = 'postgresql://ucyhwjueiddyap:d4b568b45f2d21b0d5439543ea3fe7d3560f75ec2799e780897de62bb3752379@ec2-3-224-164-189.compute-1.amazonaws.com:5432/d3kru7fbguascq'
+database_path = 'postgresql://{}:{}@{}:{}/{}'.format(
+    'ucyhwjueiddyap', # User
+    'd4b568b45f2d21b0d5439543ea3fe7d3560f75ec2799e780897de62bb3752379', # Password
+    'ec2-3-224-164-189.compute-1.amazonaws.com', # Host
+    '5432', # Port
+    'd3kru7fbguascq' # Database
+)
 
-# Host: ec2-3-224-164-189.compute-1.amazonaws.com
-# Database: d3kru7fbguascq
-# User: ucyhwjueiddyap
-# Port: 5432
-# Password: d4b568b45f2d21b0d5439543ea3fe7d3560f75ec2799e780897de62bb3752379
 
 def setup_db(app, database_path = database_path):
     app.config['SQLALCHEMY_DATABASE_URI'] = database_path
@@ -84,12 +85,13 @@ class Empleado(db.Model):
 
     def format(self):
         return {
-            'dni_empleado': self.dni_admin,
+            'dni_empleado': self.dni_empleado,
             'nombres': self.nombres,
             'apellidos': self.apellidos,
             'genero': self.genero,
             'fecha_anadido': self.fecha_anadido,
-            'fecha_modificado': self.fecha_modificado
+            'fecha_modificado': self.fecha_modificado,
+            'admin': self.admin
         }
 
     def __repr__(self):

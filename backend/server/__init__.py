@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, current_user, login_required, logout_user
 from flask_login import LoginManager
 from models import setup_db, db, datetime, Administrador, Empleado, Tarea
+import json
 
 # Environment variables
 # $env:FLASK_APP = "server"
@@ -15,14 +16,15 @@ def create_app(test_config = None):
     login_admin.init_app(app)
 
     setup_db(app)
-    CORS(app)
-
     app.config['SECRET_KEY'] = "12345"
+
+    CORS(app)
 
     @app.after_request
     def after_resquest(response):
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorizations, true')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE,OPTIONS')
+        response.headers.add('Content-Type', 'application/json')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS')
         return response
 
     @login_admin.user_loader
@@ -53,10 +55,11 @@ def create_app(test_config = None):
                     password = hashed)
                 db.session.add(admin)
                 db.session.commit()
-                response['mensaje'] = 'success'
+                response['success'] = True
                 response['admin'] = admin.format()
             else:
-                response['mensaje'] = '¡Confirme correctamente su contraseña!'
+                response['success'] = False
+                response['message'] = '¡Confirme correctamente su contraseña!'
 
         except Exception as exp:
             db.session.rollback()
@@ -106,38 +109,49 @@ def create_app(test_config = None):
         else:
             return jsonify(response)
 
-    @app.route('/empleados')
-    @login_required
+    @app.route('/empleados', methods=["GET"])
+    # @login_required
+    @cross_origin()
     def empleados():
         empleados = Empleado.query.order_by('fecha_anadido').all()
-        # render_template('empleados.html', empleados = empleados, name = current_user.nombres)
-        return jsonify({'Component': 'empleados'})
+        return jsonify({
+            'Empleados': [empleado.format() for empleado in empleados],
+            'Current User': 'current_user.nombres'
+        })
 
-    @app.route('/empleados/new_empleado', methods=["POST","GET"])
+    @app.route('/administradores', methods=["GET"])
+    def administradores():
+        administradores = Administrador.query.order_by('fecha_anadido').all()
+        return jsonify({
+            'Administradores': [admin.format() for admin in administradores],
+            'Current User': 'current_user.nombres'
+        })
+
+    @app.route('/empleados/new_empleado', methods=["POST"])
     def new_empleado():
         error = False
-        response = {}
         try:
-            dni_empleado = request.get_json()["dni_empleado"]
-            nombres = request.get_json()["nombres"]
-            apellidos = request.get_json()["apellidos"]
-            genero = request.get_json()["genero"]
+            body = request.get_json()['body']
+            
+            print(type(body)) # STRING
+            
+            data = json.loads(body)
+
+            dni_empleado = data['dni_empleado']
+            nombres = data['nombres']
+            apellidos = data['apellidos']
+            genero = data['genero']
 
             empleado = Empleado(
                 dni_empleado = dni_empleado,
                 nombres = nombres,
                 apellidos = apellidos,
                 genero = genero,
-                admin = current_user.dni_admin
+                admin = '72450405'
             )
 
             db.session.add(empleado)
             db.session.commit()
-
-            response['dni_empleado'] = empleado.dni_empleado
-            response['nombres'] = empleado.nombres
-            response['apellidos'] = empleado.apellidos
-            response['genero'] = empleado.genero
 
         except Exception as exp:
             db.session.rollback()
@@ -151,7 +165,10 @@ def create_app(test_config = None):
         if error:
             abort(500)
         else:
-            return jsonify(response)
+            return jsonify({
+                'success': True,
+                'Empleado': empleado.format()
+            })
 
     @app.route('/empleados/delete_empleado/<dni>', methods=['DELETE'])
     def delete_empleado(dni):

@@ -103,7 +103,7 @@
       </div>
 
       <!-- Password button -->
-      <div id="changepassword" class="changepassword">
+      <div id="changepassword" class="changepassword" v-if="alert">
         <span
           class="closebtn"
           onclick="this.parentElement.style.display='none';"
@@ -126,6 +126,8 @@ export default {
       correo: "",
       password: "",
       cpassword: "",
+
+      alert: false,
     };
   },
   methods: {
@@ -151,6 +153,14 @@ export default {
       let data = await response.json();
       console.log("Response: ", response);
       console.log("Data: ", data);
+
+      if(data['success']){
+        this.$router.push({
+        name: "login",
+        })
+      } else {
+        this.alert = true;
+      }
     },
   },
 };
@@ -318,10 +328,6 @@ form .button input:hover {
 }
 
 /* password */
-
-.changepassword {
-  display: none;
-}
 
 #changepassword {
   padding: 20px;
