@@ -130,7 +130,7 @@ export default {
       nombres: "",
       apellidos: "",
       genero: "",
-    };
+    }
   },
 
   components: {
@@ -140,7 +140,6 @@ export default {
   props: {
     currentUser: {
       type: String,
-      required: true,
     },
   },
 

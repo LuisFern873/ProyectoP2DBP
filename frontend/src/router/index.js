@@ -1,24 +1,20 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
-import Login from "../views/Login.vue";
-import Register from "../views/Register.vue";
-import Tareas from "../views/Tareas.vue";
 
 const routes = [
   {
     path: "/",
     name: "home",
-    component: Home,
+    component: () => import(/* webpackChunkName: "home" */ "../views/Home.vue"),
   },
   {
     path: "/login",
     name: "login",
-    component: Login,
+    component: () => import(/* webpackChunkName: "login" */ "../views/Login.vue"),
   },
   {
     path: "/register",
     name: "register",
-    component: Register,
+    component: () => import(/* webpackChunkName: "register" */ "../views/Register.vue"),
   },
   {
     path: "/empleados",
@@ -30,7 +26,7 @@ const routes = [
   {
     path: "/tareas",
     name: "tareas",
-    component: Tareas,
+    component: () => import(/* webpackChunkName: "tareas" */ "../views/Tareas.vue"),
   },
 ];
 

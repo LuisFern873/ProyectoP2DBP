@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, abort, request
 from flask_cors import CORS, cross_origin
+from sqlalchemy import true
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, current_user, login_required, logout_user
 from flask_login import LoginManager
@@ -22,7 +23,6 @@ def create_app(test_config = None):
 
     @app.after_request
     def after_resquest(response):
-        response.headers.add('Content-Type', 'application/json')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
         response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS')
         return response
@@ -110,7 +110,6 @@ def create_app(test_config = None):
             return jsonify(response)
 
     @app.route('/empleados', methods=["GET"])
-    # @login_required
     @cross_origin()
     def empleados():
         empleados = Empleado.query.order_by('fecha_anadido').all()
@@ -243,12 +242,13 @@ def create_app(test_config = None):
         else:
             return jsonify(response)
 
-    @app.route('/tareas')
-    @login_required
+    @app.route('/tareas', methods = ['GET'])
     def tareas():
         tareas = Tarea.query.all()
-        # render_template("tareas.html", tareas = tareas)
-        return jsonify({'Component': 'tareas'})
+        return jsonify({
+            'success': True,
+            'tareas': [tarea.format() for tarea in tareas]
+        })
 
     @app.route('/empleados/asignar_tarea/<dni>', methods = ['POST','GET'])
     def asignar_tarea(dni):
@@ -282,7 +282,7 @@ def create_app(test_config = None):
 
             return jsonify({'titulo': titulo, 'descripcion': descripcion})
 
-    @app.route('/tareas/update_tarea/<id>', methods = ['PUT'])
+    @app.route('/tareas/update_tarea/<id>', methods = ['PATCH'])
     def update_tarea(id):
         # Tarea que va ser completada
         tarea = Tarea.query.filter_by(id_tarea = id)
@@ -292,7 +292,10 @@ def create_app(test_config = None):
 
         # redirect(url_for('tareas'))
 
-        return jsonify({'Component': 'tareas'})
+        return jsonify({
+            'success': True,
+            'tarea': tarea.format()
+        })
 
     @app.route('/logout')
     @login_required
