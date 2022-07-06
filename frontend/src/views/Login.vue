@@ -22,12 +22,19 @@
         <input type="submit" value="Inicia Sesión" />
       </form>
     </div>
-    <!-- Error alert button -->
-    <div id="error" class="alert">
+    <!-- Password alert button -->
+    <div id="error" class="alert" v-if="passwordAlert">
       <span class="closebtn" onclick="this.parentElement.style.display='none';"
         >&times;</span
       >
       ¡Combinación de DNI/contraseña inválida!
+    </div>
+    <!-- Error alert button -->
+    <div id="error" class="alert" v-if="errorAlert">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';"
+        >&times;</span
+      >
+      ¡Algo salió mal!
     </div>
   </div>
 </template>
@@ -40,6 +47,8 @@ export default {
       title: "Login",
       dni: "",
       password: "",
+      passwordAlert: false,
+      errorAlert: false,
     };
   },
   methods: {
@@ -66,12 +75,18 @@ export default {
         this.$router.push({
           name: "empleados",
           params: {
-            nombres: data["admin"]["nombres"],
-            apellidos: data["admin"]["apellidos"],
+            currentUser: data["admin"]["nombres"] + " " + data["admin"]["apellidos"]
           },
         });
       } else {
         console.log("Autentication failed: ", data);
+
+        if(data['message'] === 'Incorrect dni/password combination'){
+          this.passwordAlert = true
+        }
+        else{
+          this.errorAlert = true
+        }
       }
     },
   },
@@ -189,10 +204,6 @@ input[type="submit"] {
 input[type="submit"]:hover {
   border-color: #2691d9;
   transition: 0.5s;
-}
-
-.alert {
-  display: none;
 }
 
 #error {

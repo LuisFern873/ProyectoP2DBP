@@ -300,4 +300,12 @@ def create_app(test_config = None):
         logout_user()
         return jsonify({'Component': 'logout'})
 
+    @app.errorhandler(500)
+    def server_error(error):
+        return jsonify({
+            'success': False,
+            'code': 500,
+            'message': 'Internal Server Error'
+        }), 500
+
     return app  

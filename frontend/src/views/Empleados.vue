@@ -3,7 +3,7 @@
     <section class="textos-header">
       <h2>Lista de empleados</h2>
       <p style="color: white; font-size: 25px">
-        ¡Bienvenido! {{ currentUser }}
+        ¡Bienvenido! {{ this.currentUser }}
       </p>
     </section>
 
@@ -123,7 +123,6 @@ import Popup from "../components/Popup.vue";
 export default {
   data() {
     return {
-      currentUser: "Luis",
       empleados: [],
       formEmpleados: false,
 
@@ -136,6 +135,13 @@ export default {
 
   components: {
     Popup,
+  },
+
+  props: {
+    currentUser: {
+      type: String,
+      required: true,
+    },
   },
 
   methods: {
