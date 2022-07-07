@@ -23,13 +23,21 @@ class TestTamboApi(unittest.TestCase):
             }
 
         self.test_empleado =  {
-            'dni_empleado': self.dni_empleado,
+            'dni_empleado': '77776543',
             'nombres': 'Emple',
             'apellidos': 'Ado',
             'genero': 'F',
             'fecha_anadido': datetime.now,
             'admin': '6357830'
         }      
+
+        self.test_tarea = {
+            'id_tarea': 1,
+            'titulo': 'Comer agua',
+            'descripcion': 'Vaya a comer agua o sera despedido',
+            'completo': False,
+            'asignado': '77776543'
+        }
 
 #------------ADMINISTRADORES-----------------#
 def test_register_admin_failed(self):
