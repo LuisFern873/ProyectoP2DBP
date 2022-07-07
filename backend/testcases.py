@@ -77,13 +77,15 @@ def test_delete_empleado_failed(self):
 def test_delete_empleado_success(self):
     pass
 
+#------------ASIGNACION-DE-TAREAS----------#
+
+def test_assign_tarea_failed(self):
+    pass
+
+def test_assign_tarea_success(self):
+    pass
+
 #-------------------TAREAS-------------------#
-
-def test_create_tarea_failed(self):
-    pass
-
-def test_create_tarea_success(self):
-    pass
 
 def test_get_tareass_failed(self):
     pass
@@ -97,12 +99,6 @@ def test_update_tareas_failed(self):
 def test_update_tarea_success(self):
     pass
 
-#------------ASIGNACION-DE-TAREAS----------#
 
-def test_assign_tarea_failed(self):
-    pass
-
-def test_assign_tarea_success(self):
-    pass
 
 ### note to self: gonna update every case one by one
