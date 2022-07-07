@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, abort, request
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from sqlalchemy import true
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, current_user, login_required, logout_user
@@ -10,6 +10,7 @@ import json
 # Environment variables
 # $env:FLASK_APP = "server"
 # $env:FLASK_ENV = "development"
+# http://127.0.0.1:5000/
 
 def create_app(test_config = None):
     app = Flask(__name__)
@@ -23,7 +24,7 @@ def create_app(test_config = None):
 
     @app.after_request
     def after_resquest(response):
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorizations, true')
         response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS')
         return response
 
@@ -78,7 +79,6 @@ def create_app(test_config = None):
 
 
     @app.route('/login/log_admin', methods=["POST"])
-    @cross_origin()
     def log_admin():
         response = {}
         error = False
@@ -110,19 +110,10 @@ def create_app(test_config = None):
             return jsonify(response)
 
     @app.route('/empleados', methods=["GET"])
-    @cross_origin()
     def empleados():
         empleados = Empleado.query.order_by('fecha_anadido').all()
         return jsonify({
             'Empleados': [empleado.format() for empleado in empleados],
-            'Current User': 'current_user.nombres'
-        })
-
-    @app.route('/administradores', methods=["GET"])
-    def administradores():
-        administradores = Administrador.query.order_by('fecha_anadido').all()
-        return jsonify({
-            'Administradores': [admin.format() for admin in administradores],
             'Current User': 'current_user.nombres'
         })
 
@@ -195,7 +186,7 @@ def create_app(test_config = None):
         else:
             return jsonify(response)
 
-    @app.route('/empleados/update_empleado/<dni>', methods=['PUT'])
+    @app.route('/empleados/update_empleado/<dni>', methods=['PATCH'])
     def update_empleado(dni):
         error = False
         response = {}
@@ -250,58 +241,49 @@ def create_app(test_config = None):
             'tareas': [tarea.format() for tarea in tareas]
         })
 
-    @app.route('/empleados/asignar_tarea/<dni>', methods = ['POST','GET'])
+    @app.route('/empleados/asignar_tarea/<dni>', methods = ['POST'])
     def asignar_tarea(dni):
-
-        response = {}
-
         # Recuperar datos de la tarea
         titulo = request.get_json()["titulo"]
         descripcion = request.get_json()["descripcion"]
 
-        if titulo == "":
-            response['mensaje_error'] = 'Ingrese un titulo valido'
-            return response
-        elif descripcion == "":
-            response['mensaje_error'] = 'Ingrese una descripcion valida'
-            return response
-        else:
-            # Empleado al que le vamos a asignar la tarea
-            empleado = Empleado.query.filter_by(dni_empleado = dni).first()
+        # Empleado al que le vamos a asignar la tarea
+        empleado = Empleado.query.filter_by(dni_empleado = dni).first()
 
-            # Creamos la tarea
-            tarea = Tarea(
-                titulo = titulo,
-                descripcion = descripcion,
-                completo = False,
-                empleado = empleado
-            )
-            # Añadimos la tarea
-            db.session.add(tarea)
-            db.session.commit()
+        if empleado is None:
+            abort(404)
 
-            return jsonify({'titulo': titulo, 'descripcion': descripcion})
+        # Creamos la tarea
+        tarea = Tarea(
+            titulo = titulo,
+            descripcion = descripcion,
+            completo = False,
+            empleado = empleado
+        )
+        # Añadimos la tarea
+        db.session.add(tarea)
+        db.session.commit()
+
+        # Respuesta
+        return jsonify({
+            'success': True, 
+            'tarea': tarea.format()
+        })
 
     @app.route('/tareas/update_tarea/<id>', methods = ['PATCH'])
     def update_tarea(id):
         # Tarea que va ser completada
         tarea = Tarea.query.filter_by(id_tarea = id)
+        if tarea is None:
+            abort(404)
         # Tarea marcada como completa
         tarea.update({'completo': True})
         db.session.commit()
-
-        # redirect(url_for('tareas'))
 
         return jsonify({
             'success': True,
             'tarea': tarea.format()
         })
-
-    @app.route('/logout')
-    @login_required
-    def logout():
-        logout_user()
-        return jsonify({'Component': 'logout'})
 
     @app.errorhandler(500)
     def server_error(error):
@@ -310,5 +292,13 @@ def create_app(test_config = None):
             'code': 500,
             'message': 'Internal Server Error'
         }), 500
+
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            'success': False,
+            'code': 404,
+            'message': 'resource not found'
+        }), 404
 
     return app  

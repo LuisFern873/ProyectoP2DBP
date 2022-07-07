@@ -26,7 +26,7 @@
       </router-link>
     </div>
     <div v-for="(empleado, index) in empleados" :key="index" class="container">
-      <div class="box" id="{{empleado.dni_empleado}}">
+      <div class="box">
         <img
           v-if="empleado.genero == 'M'"
           src="../assets/empleado_hombre.png"
@@ -42,9 +42,9 @@
           <li>Admin: {{ empleado.admin }}</li>
         </div>
         <div class="botones">
-          <button class="boton-tarea" role="button">Asignar Tarea</button>
-          <button class="boton-eliminar" role="button">Eliminar</button>
-          <button class="boton-editar" role="button">Editar</button>
+          <button class="boton-tarea" role="button" @click="toggleFormAsignar(empleado.dni_empleado)">Asignar Tarea</button>
+          <button class="boton-eliminar" role="button" @click="deleteEmpleado(empleado.dni_empleado)">Eliminar</button>
+          <button class="boton-editar" role="button" @click="toggleFormEditar(empleado.dni_empleado)">Editar</button>
         </div>
       </div>
     </div>
@@ -113,12 +113,17 @@
         </form>
       </div>
     </div>
+    <Asignar v-if="showAsignar" :empleado="empleadoAsignado"></Asignar>
+    <Editar v-if="showEditar" :empleado="empleadoEditado"></Editar>
+
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import Popup from "../components/Popup.vue";
+import Asignar from "../components/Asignar.vue";
+import Editar from "@/components/Editar.vue";
 
 export default {
   data() {
@@ -130,12 +135,20 @@ export default {
       nombres: "",
       apellidos: "",
       genero: "",
+
+      showAsignar: false,
+      showEditar: false,
+
+      empleadoAsignado: "",
+      empleadoEditado: "",
     }
   },
 
   components: {
     Popup,
-  },
+    Asignar,
+    Editar
+},
 
   props: {
     currentUser: {
@@ -144,6 +157,7 @@ export default {
   },
 
   methods: {
+    // LISTA DE EMPLEADOS :)
     getEmpleados() {
       const path = "http://127.0.0.1:5000/empleados";
       axios
@@ -151,6 +165,19 @@ export default {
         .then((response) => {
           let empleados = response.data.Empleados;
           this.empleados = empleados;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    
+    // ELIMINAR UN EMPLEADO POR SU DNI
+    deleteEmpleado(empleado){
+      const path = "http://127.0.0.1:5000/empleados/delete_empleado/" + empleado;
+      axios
+        .delete(path)
+        .then((response) => {
+          console.log(response);
         })
         .catch((error) => {
           console.log(error);
@@ -173,15 +200,29 @@ export default {
         })
         .then((response) => {
           console.log(response);
+          this.formEmpleados = false;
         })
         .catch((error) => {
           console.log(error);
+          this.formEmpleados = false;
         });
     },
 
     toggleForm() {
       this.formEmpleados = !this.formEmpleados;
     },
+
+    toggleFormAsignar(empleado) {
+      this.showAsignar = !this.showAsignar;
+      this.empleadoAsignado = empleado;
+      console.log(this.empleadoAsignado);
+    },
+
+    toggleFormEditar(empleado){
+      this.showEditar = !this.showEditar;
+      this.empleadoEditado = empleado;
+      console.log(this.empleadoEditado);
+    }
   },
   created() {
     this.getEmpleados();
@@ -191,7 +232,7 @@ export default {
 
 <style scoped>
 .empleados {
-  height: 100vh;
+  height: 100%;
   background: -webkit-linear-gradient(
       to right,
       hsla(220, 52%, 70%, 0.863),
@@ -221,6 +262,7 @@ export default {
 }
 
 .textos-header {
+  padding-top: 10px;
   text-align: center;
 }
 .textos-header h2 {

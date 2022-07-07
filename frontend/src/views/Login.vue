@@ -81,7 +81,7 @@ export default {
       } else {
         console.log("Autentication failed: ", data);
 
-        if(data['message'] === 'Incorrect dni/password combination'){
+        if(data['message'] === "Incorrect dni/password combination"){
           this.passwordAlert = true
         }
         else{
