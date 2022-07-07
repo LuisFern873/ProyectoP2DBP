@@ -115,7 +115,11 @@ class TestTamboApi(unittest.TestCase):
     #-------------------TAREAS-------------------#
 
     def test_get_tareass_failed(self):
-        pass
+        res = self.client().get('/tareas?id_tarea=999999')
+        data = json.loads(res.data)
+        
+        self.assertEqual(len(data['tareas'],0))
+        self.assertEqual(data['success'], False)
 
     def test_get_tareas_success(self):
         self.client().post('/tareas', json=self.test_tarea_succesful)
