@@ -6,13 +6,12 @@
 | --------- | --------------------------- | ------------------------------------------------------------- |
 | 202110216 | Luis Fernando Méndez Lázaro | [luis.mendez.l@utec.edu.pe](mailto:luis.mendez.l@utec.edu.pe) |
 | 202110394 | Jose Francisco Wong Orrillo | [jose.wong@utec.edu.pe](mailto:jose.wong@utec.edu.pe) |
-| 201820010 | Pedro Ivan Renzo Lizarbe Palacios | [pedro.lizarbe.p@utec.edu.pe](mailto:pedro.lizarbe.p@utec.edu.pe) |
 | 202110399 | Jean Franco Aquino Rojas | [jean.aquino@utec.udu.pe](mailto:jean.aquino@utec.udu.pe) |
 ## Descripción:
 
 Hoy en día, muchas empresas están buscando herramientas que mejoren la productividad de su personal administrativo y empleados. Es por ello, que se requiere de software que organice sus recursos y se ajuste a sus necesidades. En ese marco, nace este proyecto que pretende solucionar estos problemas en aquellas organizaciones que buscan máxima eficiencia. Entre estas se encuentra la cadena de tiendas Tambo+, siendo nuestro proyecto a quien va dirigido.
 
-![](static/css/images/Tambo-logo.png)
+![](frontend/src/assets/Tambo-logo.png)
 
 ## Objetivos principales / Misión / Visión:
 
@@ -36,8 +35,10 @@ que posee la cadena de tiendas Tambo, por medio de una plataforma web.
 
 Para el front-end se utilizaron las siguientes tecnologías:
 
-- HTML
-- CSS
+- VUE.js
+- VUE CLI
+
+![](frontend/src/assets/logo.png)
 
 ### Back-end:
 
@@ -47,7 +48,6 @@ Para el back-end se utilizaron las siguientes tecnologías:
 - SQLalchemy
 - flask_migrate
 - flask_login
-- Jinja2
 - werkzeug.security (encriptación de contraseñas)
 
 ### Base de datos:
@@ -60,58 +60,99 @@ Dado que la base de datos y su respectivo servidor se encuentran alojadas en Her
 
 ## Información acerca de los API. Requests y Responses de cada endpoint utilizado en el sistema:
 
-| HTTP method | API endpoint                      | Description and response                                          |
+| HTTP method | API endpoint                      | Description and response                                    |
 | ----------- | --------------------------------- | ----------------------------------------------------------- |
-|             | /                                 | Muestra la página de inicio (home)                          |
-|             | /register                         | Muestra el formulario de registro                           |
-| POST y GET  | /register/register\_admin         | Crea y registra a un administrador en la base de datos      |
-|             | /login                            | Muestra el formulario para iniciar sesión                   |
-| POST y GET  | /login/log\_admin                 | Autenticación e inicio de sesión de los administradores     |
-|             | /empleados                        | Muestra la lista de empleados                               |
-| POST y GET  | /empleados/new\_empleado          | Crea y registra a un empleado en la base de datos           |
+| GET         | /empleados                        | Obtener la lista de empleados y sus atributos               |
+| GET         | /tareas                           | Obtener la lista de tareas y sus atributos                  |
+| POST        | /register/register\_admin         | Crea y registra a un administrador en la base de datos      |
+| POST        | /login/log\_admin                 | Autenticación e inicio de sesión de los administradores     |
+| POST        | /empleados/new\_empleado          | Crea y registra a un empleado en la base de datos           |
 | DELETE      | /empleados/delete\_empleado/< dni > | Elimina a un empleado de la base de datos apartir de su dni |
-| PUT         | /empleados/update\_empleado/< dni > | Actualiza los datos de un empleado apartir de su dni        |
-|             | /tareas                           | Muestra la lista de tareas pendientes                       |
-| POST y GET  | /empleados/asignar\_tarea/< dni >   | Asigna una tarea a un empleado apartir de su dni            |
-| PUT         | /tareas/update\_tarea/< id >        | Actualiza el estado de la tarea a completo apartir de su id  |
-|             | /logout                           | Permite que los administradores cierren sesión              |
+| PATCH       | /empleados/update\_empleado/< dni > | Actualiza los datos de un empleado apartir de su dni        |
+| POST        | /empleados/asignar\_tarea/< dni > | Asigna una tarea a un empleado apartir de su dni            |
+| PATCH       | /tareas/update\_tarea/< id >      | Actualiza el estado de la tarea a completo apartir de su id  |
+
+## Vistas y componentes
+
+### Vistas
+
+| Vista           | Vue Router                        | Description and response                                    |
+|-----------------| --------------------------------- | ----------------------------------------------------------- |
+| Home.vue        | /                                 | Muestra la página de inicio (home)                          |
+| Register.vue    | /register                         | Muestra el formulario de registro.                          |
+| Login.vue       | /login                            | Muestra el formulario para iniciar sesión                   |
+| Empleados.vue   | /empleados                        | Muestra la lista de empleados                               |
+| Tareas.vue      | /tareas                           | Muestra la lista de tareas pendientes                       |
+
+### Componentes
+
+Uso de componentes para la creación de formularios emergentes:
+
+| Componente                        | Description and response                                             |
+| --------------------------------- | -------------------------------------------------------------------- |
+| Asignar.vue                       | Formulario emergente para la asignación de una tarea a un empleado   |
+| Editar.vue                        | Formulario emergente para editar los datos de un empleado            |
+| Anadir.vue                        | Formulario emergente para añadir un empleado                         |
+
+```vue
+<Anadir v-if="showAnadir"></Anadir>
+<Asignar v-if="showAsignar" :empleado="empleadoAsignado"></Asignar>
+<Editar v-if="showEditar" :empleado="empleadoEditado"></Editar>
+```
 
 ## Hosts:
 
-Para efectos de nuestro proyecto, utilizamos el localhost.
+Para efectos de nuestro proyecto, se utilizaron 2 hosts locales:
+
+- Para el backend, por defecto nuestra API Flask se ejecuta en:
+
+```bat
+host = localhost
+port = 5000
+```
+
+- Para el frontend, por defecto nuestra aplicación de VUE se ejecuta en:
+
+```bat
+host = localhost
+port = 8080
+```
 
 ## Forma de autenticación:
 
 Para la autenticación de administradores se hizo uso del conocido módulo flask_login. Este permite que el acceso a los datos de empleados y tareas este restringido solo para los administradores que hayan iniciado sesión (logeados). A continuación, se presenta el código que realiza el proceso de autenticación mediante el formulario "login". En este se verifica que el dni ingresado pertenezca a un usuario registrado en la base de datos y que la contraseña ingresada coincida con la contraseña encriptada registrada como atributo de ese mismo usuario. Si esto se cumple, se procede a iniciar la sesión.
 
 ```python
-@app.route('/login/log_admin', methods=["POST"])
-def log_admin():
-    response = {}
-    error = False
+    @app.route('/login/log_admin', methods = ['POST'])
+    def log_admin():
+        response = {}
+        error = False
 
-    dni_admin = request.get_json()["dni_admin_login"]
-    password = request.get_json()["password_login"]
+        try:
+            dni_admin = request.get_json()['dni']
+            password = request.get_json()['password']
+            admin = Administrador.query.filter_by(dni_admin = dni_admin).first()
 
-    try:
-        admin = Administrador.query.filter_by(dni_admin = dni_admin).first()
-        
-        if admin is not None and check_password_hash(admin.password, password):
-            response['mensaje'] = 'success'
-            login_user(admin)
+            if admin is not None and check_password_hash(admin.password, password):
+                login_user(admin)
+                response['success'] = True
+                response['admin'] = admin.format()
+            else:
+                response['success'] = False
+                response['message'] = 'Incorrect dni/password combination'
+
+        except Exception as exp:
+            error = True
+            response['success'] = False
+            response['message'] = 'Exception is raised'
+            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+            message = template.format(type(exp).__name__, exp.args)
+            print(message)
+
+        if error:
+            abort(500)
         else:
-            response['mensaje'] = '¡Combinación DNI/contraseña inválida!'
-
-    except Exception as exp:
-        error = True
-        response['mensaje'] = 'Exception is raised'
-        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-        message = template.format(type(exp).__name__, exp.args)
-        print(message)
-    if error:
-        abort(500)
-    else:
-        return jsonify(response)
+            return jsonify(response)
 ```
 
 ## Manejo de errores HTTP:
@@ -160,13 +201,34 @@ Dentro de la aplicación,aparecen distintas alertas a fin de notificar al usuari
     Otras alertas que podrían aparecer tienen la función de notificarle al usuario que su solicitud (por ejemplo, añadir empleado, eliminar empleado, asignar tarea, actualizar empleado, etc.) se ha ejecutado exitosamente.
 
 
-
 ## Cómo ejecutar el sistema (Deployment scripts):
 
 - Asegurarse de cumplir con todos los requisitos de intalación de paquetes, módulos y librerias que aparecen en el documento de texto requirements.txt
 
-- Ejecutar en la terminal el siguiente comando 
+- **Backend**
+    - Para levantar el backend, desde la terminal, ejecutamos:
+    ```bat
+    cd backend 
+    ```
+    - Luego, definimos las siguientes variables de ambiente:
+    ```bat
+    $env:FLASK_APP = "server"
+    $env:FLASK_ENV = "development"
+    ```
+    - Finalmente, ejecutamos:
+    ```bat
+    flask run
+    ```
+- **Frontend**
+    - Para levantar el frontend, desde la terminal, ejecutamos:
+    ```bat
+    cd frontend 
+    ```
+    - Finalmente, ejecutamos:
+    ```bat
+    yarn serve
+    ```
 
-```
-python app.py 
-```
+## Modelo Relacional
+
+![](frontend/src/assets/modelo_relacional.png)
