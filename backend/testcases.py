@@ -14,12 +14,12 @@ class TestTamboApi(unittest.TestCase):
         setup_db(self.app, self.database_path)
 
         self.test_admin_successful =  {
-                'dni_admin': '63578380',
+                'dni': '63578380',
                 'nombres': 'Admin',
                 'apellidos': 'Istrador',
                 'correo': 'adminmail@gmail.com',
                 'password': '1234',
-                'fecha_anadido': datetime.now   
+                'cpassword': '1234' 
             }
 
         self.test_admin_failure =  {
@@ -28,26 +28,14 @@ class TestTamboApi(unittest.TestCase):
                 'apellidos': '',
                 'correo': '',
                 'password': '',
-                'fecha_anadido': ''
-            }
-
-        self.test_login_succesful =  {
-                'dni': '63578380',
-                'password' : '1234'
-            }
-
-        self.test_login_failure =  {
-                'dni': '',
-                'password' : ''
+                'cpassword': ''
             }
 
         self.test_empleado_successful =  {
             'dni_empleado': '77776543',
             'nombres': 'Emple',
             'apellidos': 'Ado',
-            'genero': 'F',
-            'fecha_anadido': datetime.now,
-            'admin': '63578380'
+            'genero': 'F'
         }
         
         self.test_empleado_failure =  {
@@ -55,24 +43,16 @@ class TestTamboApi(unittest.TestCase):
             'nombres': '',
             'apellidos': '',
             'genero': '',
-            'fecha_anadido': '',
-            'admin': ''
         }           
 
         self.test_tarea_succesful = {
-            'id_tarea': 1,
             'titulo': 'Comer agua',
             'descripcion': 'Vaya a comer agua o sera despedido',
-            'completo': False,
-            'asignado': '77776543'
         }
 
         self.test_tarea_failure = {
-            'id_tarea': '',
             'titulo': '',
             'descripcion': '',
-            'completo': '',
-            'asignado': ''
         }
 
     #------------ADMINISTRADORES-----------------#
