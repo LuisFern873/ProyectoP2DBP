@@ -113,8 +113,8 @@ def create_app(test_config = None):
     def empleados():
         empleados = Empleado.query.order_by('fecha_anadido').all()
         return jsonify({
-            'Empleados': [empleado.format() for empleado in empleados],
-            'Current User': 'current_user.nombres'
+            'success': True,
+            'empleados': [empleado.format() for empleado in empleados],
         })
 
     @app.route('/empleados/new_empleado', methods=["POST"])
@@ -167,10 +167,10 @@ def create_app(test_config = None):
         try:
             Tarea.query.filter_by(asignado = dni).delete()
             Empleado.query.filter_by(dni_empleado = dni).delete()
-
+ 
             db.session.commit()
-            response['mensaje'] = 'success'
-            response['dni_empleado'] = dni
+            response['success'] = True
+            response['admin'] = dni
 
         except Exception as exp:
             db.session.rollback()
