@@ -14,7 +14,7 @@ class TestTamboApi(unittest.TestCase):
         setup_db(self.app, self.database_path)
 
         self.test_admin =  {
-                'dni_admin': '6357830',
+                'dni_admin': '63578380',
                 'nombres': 'Admin',
                 'apellidos': 'Istrador',
                 'correo': 'adminmail@gmail.com',
@@ -28,7 +28,7 @@ class TestTamboApi(unittest.TestCase):
             'apellidos': 'Ado',
             'genero': 'F',
             'fecha_anadido': datetime.now,
-            'admin': '6357830'
+            'admin': '63578380'
         }      
 
         self.test_tarea = {
