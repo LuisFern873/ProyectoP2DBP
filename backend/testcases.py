@@ -22,6 +22,15 @@ class TestTamboApi(unittest.TestCase):
                 'fecha_anadido': datetime.now,
             }
 
+        self.test_empleado =  {
+            'dni_empleado': self.dni_empleado,
+            'nombres': 'Emple',
+            'apellidos': 'Ado',
+            'genero': 'F',
+            'fecha_anadido': datetime.now,
+            'admin': '6357830'
+        }      
+
 #------------ADMINISTRADORES-----------------#
 def test_register_admin_failed(self):
     pass
