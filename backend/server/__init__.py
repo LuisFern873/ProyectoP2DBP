@@ -78,7 +78,7 @@ def create_app(test_config = None):
             return jsonify(response)
 
 
-    @app.route('/login/log_admin', methods=["POST"])
+    @app.route('/login/log_admin', methods = ['POST'])
     def log_admin():
         response = {}
         error = False
@@ -98,7 +98,7 @@ def create_app(test_config = None):
 
         except Exception as exp:
             error = True
-            response['error'] = True
+            response['success'] = False
             response['message'] = 'Exception is raised'
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(exp).__name__, exp.args)
@@ -111,7 +111,7 @@ def create_app(test_config = None):
 
     @app.route('/empleados', methods=["GET"])
     def empleados():
-        empleados = Empleado.query.order_by('fecha_anadido').all()
+        empleados = Empleado.query.all()
         return jsonify({
             'success': True,
             'empleados': [empleado.format() for empleado in empleados],

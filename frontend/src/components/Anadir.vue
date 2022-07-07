@@ -68,7 +68,7 @@
 import axios from "axios";
 
 export default {
-  name: "popup-form",
+  name: "Anadir",
   data() {
     return {
       dni_empleado: "",
@@ -89,16 +89,16 @@ export default {
         "Content-Type": "application/json",
       };
 
-      var data = {
+      var data = JSON.stringify({
         dni_empleado: this.dni_empleado,
         nombres: this.nombres,
         apellidos: this.apellidos,
         genero: this.genero,
-      };
+      });
 
       axios
         .post(path, {
-          data: data,
+          body: data,
           headers: headers,
         })
         .then((response) => {
@@ -106,6 +106,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          this.showForm = false;
         });
     },
 

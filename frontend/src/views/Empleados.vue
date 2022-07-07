@@ -10,7 +10,7 @@
     <div class="anadir">
       <button
         id="show-form"
-        @click="toggleForm"
+        @click="toggleFormAnadir"
         class="boton-anadir"
         role="button"
       >
@@ -49,70 +49,7 @@
       </div>
     </div>
 
-    <!-- <Popup v-if="formEmpleados"></Popup> -->
-    <div class="popup-form" v-if="formEmpleados">
-      <div class="popup">
-        <div class="closebtn" @click="toggleForm">&times;</div>
-        <form class="form" id="form-add" @submit.prevent="postEmpleado">
-          <h2>Ingrese los datos del empleado</h2>
-          <div class="form-element">
-            <label for="dni">Dni:</label>
-            <input
-              type="text"
-              v-model="dni_empleado"
-              id="dni_empleado"
-              placeholder="Dni"
-              maxlength="8"
-              required
-            />
-          </div>
-          <div class="form-element">
-            <label for="nombres">Nombres:</label>
-            <input
-              type="text"
-              v-model="nombres"
-              id="nombres"
-              placeholder="Nombres"
-              required
-            />
-          </div>
-          <div class="form-element">
-            <label for="apellidos">Apellidos:</label>
-            <input
-              type="text"
-              v-model="apellidos"
-              id="apellidos"
-              placeholder="Apellidos"
-              required
-            />
-          </div>
-          <div class="form-element">
-            <label for="genero">Género:</label>
-            Femenino:
-            <input
-              type="radio"
-              name="gender"
-              id="female"
-              v-model="genero"
-              value="F"
-            />
-            Masculino:
-            <input
-              type="radio"
-              name="gender"
-              id="male"
-              v-model="genero"
-              value="M"
-            />
-          </div>
-          <div class="form-element">
-            <a>
-              <button class="boton-aceptar" role="button">Aceptar</button>
-            </a>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Anadir v-if="showAnadir"></Anadir>
     <Asignar v-if="showAsignar" :empleado="empleadoAsignado"></Asignar>
     <Editar v-if="showEditar" :empleado="empleadoEditado"></Editar>
 
@@ -121,21 +58,16 @@
 
 <script>
 import axios from "axios";
-import Popup from "../components/Popup.vue";
+import Anadir from "../components/Anadir.vue";
 import Asignar from "../components/Asignar.vue";
-import Editar from "@/components/Editar.vue";
+import Editar from "../components/Editar.vue";
 
 export default {
   data() {
     return {
       empleados: [],
-      formEmpleados: false,
 
-      dni_empleado: "",
-      nombres: "",
-      apellidos: "",
-      genero: "",
-
+      showAnadir: false,
       showAsignar: false,
       showEditar: false,
 
@@ -145,10 +77,10 @@ export default {
   },
 
   components: {
-    Popup,
+    Anadir,
     Asignar,
     Editar
-},
+  },
 
   props: {
     currentUser: {
@@ -163,7 +95,8 @@ export default {
       axios
         .get(path)
         .then((response) => {
-          let empleados = response.data.Empleados;
+          console.log(response);
+          let empleados = response.data.empleados;
           this.empleados = empleados;
         })
         .catch((error) => {
@@ -184,32 +117,9 @@ export default {
         });
     },
 
-    async postEmpleado(event) {
-      event.preventDefault();
-      const path = "http://127.0.0.1:5000/empleados/new_empleado";
-
-      const response = await 
-      axios
-        .post(path, {
-          body: JSON.stringify({
-            dni_empleado: this.dni_empleado,
-            nombres: this.nombres,
-            apellidos: this.apellidos,
-            genero: this.genero,
-          }),
-        })
-        .then((response) => {
-          console.log(response);
-          this.formEmpleados = false;
-        })
-        .catch((error) => {
-          console.log(error);
-          this.formEmpleados = false;
-        });
-    },
-
-    toggleForm() {
-      this.formEmpleados = !this.formEmpleados;
+    // POP-UP FORMS
+    toggleFormAnadir() {
+      this.showAnadir = !this.showAnadir;
     },
 
     toggleFormAsignar(empleado) {
@@ -224,6 +134,7 @@ export default {
       console.log(this.empleadoEditado);
     }
   },
+
   created() {
     this.getEmpleados();
   },
