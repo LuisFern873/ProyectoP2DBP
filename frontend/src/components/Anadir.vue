@@ -2,7 +2,7 @@
   <div class="popup-form" v-if="showForm">
     <div class="popup">
       <div class="closebtn" @click="CloseForm">&times;</div>
-      <form class="form" id="form-add" @submit.prevent="handleSubmit">
+      <form class="form" id="form-add" @submit.prevent="handleSubmit(admin)">
         <h2>Ingrese los datos del empleado</h2>
         <div class="form-element">
           <label for="dni">Dni:</label>
@@ -79,9 +79,11 @@ export default {
     };
   },
 
+  props: ['admin'],
+
   methods: {
-    handleSubmit(event) {
-      event.preventDefault();
+    handleSubmit(admin) {
+
       const path = "http://127.0.0.1:5000/empleados/new_empleado";
 
       const headers = {
@@ -94,6 +96,7 @@ export default {
         nombres: this.nombres,
         apellidos: this.apellidos,
         genero: this.genero,
+        admin: admin,
       });
 
       axios

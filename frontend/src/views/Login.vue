@@ -36,6 +36,16 @@
       >
       ¡Algo salió mal!
     </div>
+
+    <!-- Welcome (Admin registrado correctamente) -->
+    <div id="welcome" class="ad" v-if="welcome">
+      <span
+        class="closebtn"
+        onclick="this.parentElement.style.display='none';"
+        >&times;</span
+      >
+      Administrador registrado correctamente :)
+    </div>
   </div>
 </template>
 
@@ -47,10 +57,13 @@ export default {
       title: "Login",
       dni: "",
       password: "",
+
       passwordAlert: false,
       errorAlert: false,
     };
   },
+  props: ['welcome'],
+
   methods: {
     async handleSubmit(event) {
       event.preventDefault();
@@ -75,11 +88,11 @@ export default {
         this.$router.push({
           name: "empleados",
           params: {
-            currentUser: data["admin"]["nombres"] + " " + data["admin"]["apellidos"]
+            currentUser: data["admin"]["nombres"] + " " + data["admin"]["apellidos"],
+            currentUserDni: data["admin"]["dni_admin"]
           },
         });
       } else {
-        console.log("Autentication failed: ", data);
 
         if(data['message'] === "Incorrect dni/password combination"){
           this.passwordAlert = true

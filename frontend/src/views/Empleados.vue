@@ -4,6 +4,7 @@
       <h2>Lista de empleados</h2>
       <p style="color: white; font-size: 25px">
         ¡Bienvenido! {{ this.currentUser }}
+        {{ this.currentUserDni }}
       </p>
     </section>
 
@@ -49,7 +50,7 @@
       </div>
     </div>
 
-    <Anadir v-if="showAnadir"></Anadir>
+    <Anadir v-if="showAnadir" :admin="currentUserDni"></Anadir>
     <Asignar v-if="showAsignar" :empleado="empleadoAsignado"></Asignar>
     <Editar v-if="showEditar" :empleado="empleadoEditado"></Editar>
 
@@ -84,6 +85,9 @@ export default {
 
   props: {
     currentUser: {
+      type: String,
+    },
+    currentUserDni: {
       type: String,
     },
   },

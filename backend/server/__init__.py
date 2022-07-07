@@ -60,7 +60,7 @@ def create_app(test_config = None):
                 response['admin'] = admin.format()
             else:
                 response['success'] = False
-                response['message'] = '¡Confirme correctamente su contraseña!'
+                response['message'] = 'Confirm correctly validation password'
 
         except Exception as exp:
             db.session.rollback()
@@ -131,13 +131,14 @@ def create_app(test_config = None):
             nombres = data['nombres']
             apellidos = data['apellidos']
             genero = data['genero']
+            admin = data['admin']
 
             empleado = Empleado(
                 dni_empleado = dni_empleado,
                 nombres = nombres,
                 apellidos = apellidos,
                 genero = genero,
-                admin = '72450405'
+                admin = admin
             )
 
             db.session.add(empleado)

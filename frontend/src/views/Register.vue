@@ -1,5 +1,23 @@
 <template>
   <div class="register">
+    <!-- Error alert button -->
+    <div id="error" class="alert" v-if="alertError">
+      <span
+        class="closebtn"
+        onclick="this.parentElement.style.display='none';"
+        >&times;</span
+      >
+      ¡Algo salió mal! Vuelva a intentarlo.
+    </div>
+    <!-- Password button -->
+    <div id="changepassword" class="changepassword" v-if="alertPassword">
+      <span
+        class="closebtn"
+        onclick="this.parentElement.style.display='none';"
+        >&times;</span
+      >
+      ¡Confirme tu contraseña correctamente!
+    </div>
     <div class="container">
       <div class="title">Registro Administrador</div>
 
@@ -82,35 +100,6 @@
           <input type="submit" value="Regístrate" />
         </div>
       </form>
-      <!-- Error alert button -->
-      <div id="error" class="alert">
-        <span
-          class="closebtn"
-          onclick="this.parentElement.style.display='none';"
-          >&times;</span
-        >
-        ¡Algo salió mal! Vuelve a intentarlo.
-      </div>
-
-      <!-- Welcome button -->
-      <div id="welcome" class="ad">
-        <span
-          class="closebtn"
-          onclick="this.parentElement.style.display='none';"
-          >&times;</span
-        >
-        ¡Bienvenid@! <a id="name"></a>.
-      </div>
-
-      <!-- Password button -->
-      <div id="changepassword" class="changepassword" v-if="alert">
-        <span
-          class="closebtn"
-          onclick="this.parentElement.style.display='none';"
-          >&times;</span
-        >
-        ¡Confirme tu contraseña correctamente!
-      </div>
     </div>
   </div>
 </template>
@@ -127,7 +116,9 @@ export default {
       password: "",
       cpassword: "",
 
-      alert: false,
+      alertPassword: false,
+      alertError: false,
+      welcome: false,
     };
   },
   methods: {
@@ -155,11 +146,17 @@ export default {
       console.log("Data: ", data);
 
       if(data['success']){
+        this.welcome = true;
         this.$router.push({
         name: "login",
         })
       } else {
-        this.alert = true;
+        if(data['message'] === 'Confirm correctly validation password'){
+          this.alertPassword = true;
+        }
+        else {
+          this.alertError = true;
+        }
       }
     },
   },
@@ -184,6 +181,7 @@ export default {
   background-attachment: absolute;
   position: relative;
   background-size: cover;
+  flex-direction: column;
 }
 
 .container {
@@ -282,17 +280,16 @@ form .button input:hover {
 /* Error Alert */
 /* The alert message box */
 
-.alert {
-  display: none;
-}
+
 
 #error {
+  width: 100%;
   padding: 20px;
   background-color: #f44336; /* Red */
   color: white;
-  margin-bottom: 15px;
-
+  margin-bottom: 30px;
   border-radius: 5px;
+  margin-top: -77px;
 }
 
 /* The close button */
@@ -314,10 +311,6 @@ form .button input:hover {
 
 /* WELCOME */
 
-.ad {
-  display: none;
-}
-
 #welcome {
   padding: 20px;
   background-color: #56f003; /* Red */
@@ -330,10 +323,12 @@ form .button input:hover {
 /* password */
 
 #changepassword {
+  width: 100%;
   padding: 20px;
   background-color: #ff9f21; /* Red */
   color: white;
-  margin-bottom: 15px;
+  margin-bottom: 30px;
   border-radius: 5px;
+  margin-top: -77px;
 }
 </style>
