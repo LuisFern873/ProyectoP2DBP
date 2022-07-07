@@ -13,30 +13,56 @@ class TestTamboApi(unittest.TestCase):
         self.database_path = 'postgresql://{}@{}/{}'.format('postgres:1234', 'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
-        self.test_admin =  {
+        self.test_admin_successful =  {
                 'dni_admin': '63578380',
                 'nombres': 'Admin',
                 'apellidos': 'Istrador',
                 'correo': 'adminmail@gmail.com',
                 'password': '1234',
-                'fecha_anadido': datetime.now,
+                'fecha_anadido': datetime.now   
             }
 
-        self.test_empleado =  {
+        self.test_admin_failure =  {
+                'dni_admin': '',
+                'nombres': '',
+                'apellidos': '',
+                'correo': '',
+                'password': '',
+                'fecha_anadido': ''
+            }
+
+        self.test_empleado_successful =  {
             'dni_empleado': '77776543',
             'nombres': 'Emple',
             'apellidos': 'Ado',
             'genero': 'F',
             'fecha_anadido': datetime.now,
             'admin': '63578380'
-        }      
+        }
+        
+        self.test_empleado_failure =  {
+            'dni_empleado': '',
+            'nombres': '',
+            'apellidos': '',
+            'genero': '',
+            'fecha_anadido': '',
+            'admin': ''
+        }           
 
-        self.test_tarea = {
+        self.test_tarea_succesful = {
             'id_tarea': 1,
             'titulo': 'Comer agua',
             'descripcion': 'Vaya a comer agua o sera despedido',
             'completo': False,
             'asignado': '77776543'
+        }
+
+        self.test_tarea_failure = {
+            'id_tarea': '',
+            'titulo': '',
+            'descripcion': '',
+            'completo': '',
+            'asignado': ''
         }
 
     #------------ADMINISTRADORES-----------------#
