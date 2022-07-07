@@ -1,3 +1,4 @@
+from datetime import datetime
 import unittest
 
 from server import create_app
@@ -11,6 +12,15 @@ class TestTamboApi(unittest.TestCase):
         self.database_name = 'test_proyecto_dbp'
         self.database_path = 'postgresql://{}@{}/{}'.format('postgres:1234', 'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
+
+        self.test_admin =  {
+                'dni_admin': '6357830',
+                'nombres': 'Admin',
+                'apellidos': 'Istrador',
+                'correo': 'adminmail@gmail.com',
+                'password': '1234',
+                'fecha_anadido': datetime.now,
+            }
 
 #------------ADMINISTRADORES-----------------#
 def test_register_admin_failed(self):
