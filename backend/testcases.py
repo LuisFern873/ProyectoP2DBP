@@ -67,7 +67,13 @@ class TestTamboApi(unittest.TestCase):
 
     #------------ADMINISTRADORES-----------------#
     def test_register_admin_failed(self):
-        pass
+        res = self.client().post('/register/register_admin', json = self.test_admin_failure)
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 500)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Internal Server Error')
+
 
     def test_register_admin_success(self):
         pass
