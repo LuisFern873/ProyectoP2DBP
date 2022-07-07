@@ -31,6 +31,16 @@ class TestTamboApi(unittest.TestCase):
                 'fecha_anadido': ''
             }
 
+        self.test_login_succesful =  {
+                'dni': '63578380',
+                'password' : '1234'
+            }
+
+        self.test_login_failure =  {
+                'dni': '',
+                'password' : ''
+            }
+
         self.test_empleado_successful =  {
             'dni_empleado': '77776543',
             'nombres': 'Emple',
