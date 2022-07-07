@@ -8,8 +8,8 @@ class TestTamboApi(unittest.TestCase):
     def setUp(self):
         self.app = create_app()
         self.client = self.app.test_client
-        self.database_name = 'quispe'
-        self.database_path = 'quospe'
+        self.database_name = 'test_proyecto_dbp'
+        self.database_path = 'postgresql://{}@{}/{}'.format('postgres:1234', 'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
 #------------ADMINISTRADORES-----------------#
