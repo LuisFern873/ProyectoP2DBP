@@ -4,7 +4,7 @@
       <h2>Lista de empleados</h2>
       <p style="color: white; font-size: 25px">
         ¡Bienvenido! {{ this.currentUser }}
-        {{ this.currentUserDni }}
+        <!-- {{ this.currentUserDni }} -->
       </p>
     </section>
 

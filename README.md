@@ -95,7 +95,7 @@ Uso de componentes para la creación de formularios emergentes:
 | Anadir.vue                        | Formulario emergente para añadir un empleado                         |
 
 ```vue
-<Anadir v-if="showAnadir"></Anadir>
+<Anadir v-if="showAnadir" :admin="currentUserDni"></Anadir>
 <Asignar v-if="showAsignar" :empleado="empleadoAsignado"></Asignar>
 <Editar v-if="showEditar" :empleado="empleadoEditado"></Editar>
 ```
