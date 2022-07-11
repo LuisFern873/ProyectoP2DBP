@@ -1,3 +1,4 @@
+from email.policy import default
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from datetime import datetime
@@ -79,10 +80,9 @@ class Empleado(db.Model):
     genero = db.Column(db.String(1), nullable = False)
 
     fecha_anadido = db.Column(db.DateTime(), default = datetime.now)
-    fecha_modificado = db.Column(db.DateTime(), nullable = True)
+    fecha_modificado = db.Column(db.DateTime(), nullable = True, default=None)
 
     tareas = db.relationship('Tarea', backref = 'empleado')
-    admin = db.Column(db.String(8), db.ForeignKey('administrador.dni_admin'))
 
     def format(self):
         return {
@@ -91,12 +91,8 @@ class Empleado(db.Model):
             'apellidos': self.apellidos,
             'genero': self.genero,
             'fecha_anadido': self.fecha_anadido,
-            'fecha_modificado': self.fecha_modificado,
-            'admin': self.admin
+            'fecha_modificado': self.fecha_modificado
         }
-
-    def __repr__(self):
-        return "Empleado: {}".format(self.dni_empleado)
 
     def insert(self):
         try:
@@ -111,7 +107,7 @@ class Empleado(db.Model):
         try:
             db.session.commit()
         except:
-            db.sesion.rollback()
+            db.session.rollback()
         finally:
             db.session.close()
 
@@ -124,6 +120,8 @@ class Empleado(db.Model):
         finally:
             db.session.close()  
     
+    def __repr__(self):
+        return f'Empleado: dni_empleado={self.dni_empleado}, nombres={self.nombres}, apellidos={self.apellidos}, genero={self.genero}, fecha_añadido={self.fecha_anadido}'
 
 class Tarea(db.Model):
     id_tarea = db.Column(db.Integer, primary_key = True)
