@@ -82,7 +82,20 @@ class TestTamboApi(unittest.TestCase):
             'id_tarea': 1,
             'titulo': 'Comer agua',
             'descripcion': 'Vaya a comer agua o sera despedido'
-        }        
+        }
+
+        self.empleado_asignatask3 =  {
+            'dni_empleado': '01000110',
+            'nombres': 'assign',
+            'apellidos': 'task3',
+            'genero': 'm'
+        } 
+
+        self.tarea_updated = {
+            'id_tarea': 2,
+            'titulo': 'Aguar comida',
+            'descripcion': 'Vaya a aguar comida o sera despedido'
+        }                
 
     #------------ADMINISTRADORES-----------------#
     def test_register_admin_failed(self):
@@ -244,6 +257,19 @@ class TestTamboApi(unittest.TestCase):
         self.assertEqual(data['message'], 'Internal Server Error')
 
     def test_update_tarea_success(self):
-        pass
+        res1 = self.client().post('/empleados/new_empleado', json = self.empleado_asignatask3)
+        data1 = json.loads(res1.data)
+        assigned_dni = data1['empleado']
+
+        res0 = self.client().post('/empleados/asignar_tarea/' + str(assigned_dni), json = self.tarea_updated)
+        data0 = json.loads(res0.data)
+        updated_id = data0['assigned']
+
+        res = self.client().patch('/empleados/update_tarea/' + str(updated_id))
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['tarea_updated'])  
 
 ### note to self: gonna update every case one by one
