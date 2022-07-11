@@ -236,7 +236,12 @@ class TestTamboApi(unittest.TestCase):
         self.assertTrue(data['tareas'])
 
     def test_update_tareas_failed(self):
-        pass
+        res = self.client().patch('/tareas/update_tarea/10000000')
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 500)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Internal Server Error')
 
     def test_update_tarea_success(self):
         pass
