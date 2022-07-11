@@ -82,36 +82,39 @@ def create_app(test_config = None):
 
     @app.route('/login/log_admin', methods = ['POST'])
     def log_admin():
-        response = {}
-        error = False
+        error_422 = False
 
         try:
-            dni_admin = request.get_json()['dni']
-            password = request.get_json()['password']
+            body = request.get_json()
+
+            dni_admin = body.get('dni_admin')
+            password = body.get('password')
+
+            if dni_admin is None or password is None:
+                error_422 = True
+                abort(422)
+            
             admin = Administrador.query.filter_by(dni_admin = dni_admin).first()
 
-            if admin is not None and check_password_hash(admin.password, password):
-                response['success'] = True
-                response['admin'] = admin.format()
-                response['token']  = jwt.encode({
-                    'dni_admin': dni_admin
-                }, app.config['SECRET_KEY'])
+            if check_password_hash(admin.password, password):
+                return jsonify({
+                    'success': True,
+                    'logged': dni_admin,
+                    'token': jwt.encode({'dni_admin': dni_admin}, app.config['SECRET_KEY'])
+                })
+
             else:
-                response['success'] = False
-                response['message'] = 'Incorrect dni/password combination'
+                return jsonify({
+                    'success': False,
+                    'message': 'Incorrect dni/password combination'
+                })
 
         except Exception as exp:
-            error = True
-            response['success'] = False
-            response['message'] = 'Exception is raised'
-            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-            message = template.format(type(exp).__name__, exp.args)
-            print(message)
-
-        if error:
-            abort(500)
-        else:
-            return jsonify(response)
+            print(exp)
+            if error_422:
+                abort(422)
+            else:
+                abort(500)
 
     @app.route('/empleados', methods=["GET"])
     def empleados():
