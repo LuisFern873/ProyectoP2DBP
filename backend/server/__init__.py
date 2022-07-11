@@ -164,7 +164,7 @@ def create_app(test_config = None):
             else:   
                 abort(500)
 
-    @app.route('/empleados/delete_empleado/<dni>', methods=['DELETE'])
+    @app.route('/empleados/delete_empleado/<dni_empleado>', methods=['DELETE'])
     def delete_empleado(dni_empleado):
         error_404 = False
 
@@ -193,7 +193,7 @@ def create_app(test_config = None):
             else:
                 abort(500)
 
-    @app.route('/empleados/update_empleado/<dni>', methods=['PATCH'])
+    @app.route('/empleados/update_empleado/<dni_empleado>', methods=['PATCH'])
     def update_empleado(dni_empleado):
         error_404 = False
 
