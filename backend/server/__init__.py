@@ -194,51 +194,39 @@ def create_app(test_config = None):
                 abort(500)
 
     @app.route('/empleados/update_empleado/<dni>', methods=['PATCH'])
-    def update_empleado(dni):
-        error = False
-        response = {}
+    def update_empleado(dni_empleado):
+        error_404 = False
 
         try:
-            edit_dni_empleado = request.get_json()["edit_dni_empleado"]
-            edit_nombres = request.get_json()["edit_nombres"]
-            edit_apellidos = request.get_json()["edit_apellidos"]
+            empleado = Empleado.query.filter_by(dni_empleado = dni_empleado).one_or_none()
 
-            empleado = Empleado.query.filter_by(dni_empleado = dni)
+            if empleado is None:
+                error_404 = True
+                abort(404)
+            
+            body = request.get_json()
+            if 'dni_empleado' in body:
+                empleado.dni_empleado = body.get('dni_empleado')
 
-            if edit_dni_empleado != "":
-                empleado.update({'dni_empleado': edit_dni_empleado})
-            else:
-                response['mensaje_error'] = 'Ingrese un dni valido'
+            if 'nombres' in body:
+                empleado.nombres = body.get('nombres')
+            
+            if 'apellidos' in body:
+                empleado.apellidos = body.get('apellidos')     
 
-            if edit_nombres != "":
-                empleado.update({'nombres': edit_nombres})
-            else:
-                response['mensaje_error'] = 'Ingrese un nombre valido'            
+            empleado.update()
 
-            if edit_apellidos != "":
-                empleado.update({'apellidos': edit_apellidos})
-            else:
-                response['mensaje_error'] = 'Ingrese un apellido valido'            
-
-            empleado.update({'fecha_modificado': datetime.now()})
-
-            db.session.commit()
-
-            response['dni_empleado'] = dni
+            return jsonify({
+                'success': True,
+                'empleado_updated': dni_empleado
+            })
 
         except Exception as exp:
-            db.session.rollback()
-            error = True
-            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-            message = template.format(type(exp).__name__, exp.args)
-            print(message)
-        finally:
-            db.session.close()
-
-        if error:
-            abort(500)
-        else:
-            return jsonify(response)
+            print(exp)
+            if error_404:
+                abort(404)
+            else:
+                abort(500)
 
     @app.route('/tareas', methods = ['GET'])
     def tareas():
