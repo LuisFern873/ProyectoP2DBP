@@ -165,30 +165,33 @@ def create_app(test_config = None):
                 abort(500)
 
     @app.route('/empleados/delete_empleado/<dni>', methods=['DELETE'])
-    def delete_empleado(dni):
-        error = False
-        response = {}
+    def delete_empleado(dni_empleado):
+        error_404 = False
+
         try:
-            Tarea.query.filter_by(asignado = dni).delete()
-            Empleado.query.filter_by(dni_empleado = dni).delete()
+            empleado = Empleado.query.filter_by(dni_empleado = dni_empleado).one_or_none()
  
-            db.session.commit()
-            response['success'] = True
-            response['admin'] = dni
+            if empleado is None:
+                error_404 = True
+                abort(404)
+            
+            empleado.delete()
+
+            tareas = Tarea.query.filter_by(asignado = dni_empleado)
+
+            tareas.delete()
+
+            return jsonify({
+                'success': True,
+                'empleado_deleted': dni_empleado
+            })
 
         except Exception as exp:
-            db.session.rollback()
-            error = True
-            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-            message = template.format(type(exp).__name__, exp.args)
-            print(message)
-        finally:
-            db.session.close()
-
-        if error:
-            abort(500)
-        else:
-            return jsonify(response)
+            print(exp)
+            if error_404:
+                abort(404)
+            else:
+                abort(500)
 
     @app.route('/empleados/update_empleado/<dni>', methods=['PATCH'])
     def update_empleado(dni):
