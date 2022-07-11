@@ -19,6 +19,15 @@ class TestTamboApi(unittest.TestCase):
                 'correo': None,
                 'password': None,
                 'cpassword': None
+            }
+
+        self.admin_successful =  {
+                'dni_admin': '63578380',
+                'nombres': 'Admin',
+                'apellidos': 'Istrador',
+                'correo': 'adminmail@gmail.com',
+                'password': '1234',
+                'cpassword': '1234' 
             }        
 
     #------------ADMINISTRADORES-----------------#
@@ -31,7 +40,12 @@ class TestTamboApi(unittest.TestCase):
         self.assertEqual(data['message'], 'Unprocessable')
 
     def test_register_admin_success(self):
-        pass
+        res = self.client().post('/register/register_admin', json = self.admin_successful)
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['created'])
 
     def test_login_admin_failed(self):
         pass
