@@ -12,9 +12,23 @@ class TestTamboApi(unittest.TestCase):
         self.database_path = 'postgresql://{}@{}/{}'.format('postgres:1234', 'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
+        self.admin_failure =  {
+                'dni_admin': None,
+                'nombres': None,
+                'apellidos': None,
+                'correo': None,
+                'password': None,
+                'cpassword': None
+            }        
+
     #------------ADMINISTRADORES-----------------#
     def test_register_admin_failed(self):
-        pass
+        res = self.client().post('/register/register_admin', json = self.admin_failure)
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unprocessable')
 
     def test_register_admin_success(self):
         pass
