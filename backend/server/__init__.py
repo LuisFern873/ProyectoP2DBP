@@ -119,6 +119,10 @@ def create_app(test_config = None):
     @app.route('/empleados', methods=["GET"])
     def empleados():
         empleados = Empleado.query.all()
+
+        if len(empleados) == 0:
+            abort(404)
+
         return jsonify({
             'success': True,
             'empleados': [empleado.format() for empleado in empleados],
