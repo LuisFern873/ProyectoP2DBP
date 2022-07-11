@@ -42,7 +42,14 @@ class TestTamboApi(unittest.TestCase):
             'nombres': 'Emple',
             'apellidos': 'Ado',
             'genero': 'f'
-        }   
+        }
+
+        self.empleado_update =  {
+            'dni_empleado': '01010101',
+            'nombres': 'update',
+            'apellidos': 'empleado',
+            'genero': 'm'
+        }       
 
     #------------ADMINISTRADORES-----------------#
     def test_register_admin_failed(self):
@@ -120,7 +127,16 @@ class TestTamboApi(unittest.TestCase):
         self.assertEqual(data['message'], 'Resource Not Found')
 
     def test_update_empleado_success(self):
-        pass
+        res0 = self.client().post('/empleados/new_empleado', json = self.empleado_update)
+        data0 = json.loads(res0.data)
+        updated_dni = data0['empleado']
+
+        res = self.client().patch('/empleados/update_empleado/' + str(updated_dni), json={'nombres': 'new nombre'})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['empleado_updated'])
 
     def test_delete_empleado_failed(self):
         pass
