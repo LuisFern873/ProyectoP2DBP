@@ -33,16 +33,21 @@ def create_app(test_config = None):
 
     @app.route('/register/register_admin', methods=["POST"])
     def register_admin():
-        error = False
-        response = {}
+        error_422 = False
 
         try:
-            dni_admin = request.get_json()['dni']
-            nombres = request.get_json()['nombres']
-            apellidos = request.get_json()['apellidos']
-            correo = request.get_json()['correo']
-            password = request.get_json()['password']
-            confirm_password = request.get_json()['cpassword']
+            body = request.get_json()
+
+            dni_admin = body.get('dni_admin')
+            nombres = body.get('nombres')
+            apellidos = body.get('apellidos')
+            correo = body.get('correo')
+            password = body.get('password')
+            confirm_password = body.get('cpassword')
+
+            if dni_admin is None or nombres is None or apellidos is None or correo is None or password is None or confirm_password is None:
+                error_422 = True
+                abort(422)
 
             hashed = generate_password_hash(password)
 
@@ -53,28 +58,26 @@ def create_app(test_config = None):
                     apellidos = apellidos,
                     correo = correo,
                     password = hashed)
-                db.session.add(admin)
-                db.session.commit()
-                response['success'] = True
-                response['admin'] = admin.format()
+
+                new_admin_dni = admin.insert()
+
+                return jsonify({
+                    'success': True,
+                    'created': new_admin_dni
+                })
+
             else:
-                response['success'] = False
-                response['message'] = 'Confirm correctly validation password'
+                return jsonify({
+                    'success': False,
+                    'message': 'Unconfirmed password'
+                })
 
         except Exception as exp:
-            db.session.rollback()
-            error = True
-            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-            message = template.format(type(exp).__name__, exp.args)
-            print(message)
-            
-        finally:
-            db.session.close()
-
-        if error:
-            abort(500)
-        else:
-            return jsonify(response)
+            print(exp)
+            if error_422:
+                abort(422)
+            else:
+                abort(500)
 
 
     @app.route('/login/log_admin', methods = ['POST'])
