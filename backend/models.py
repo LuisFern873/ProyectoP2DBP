@@ -27,7 +27,6 @@ class Administrador(db.Model, UserMixin):
     correo = db.Column(db.String(100), unique = True, nullable = False)
     password = db.Column(db.String(300), nullable = False)
     fecha_anadido = db.Column(db.DateTime(), default = datetime.now)
-    empleados = db.relationship('Empleado', backref = 'administrador')
 
     def format(self):
         return {
@@ -42,13 +41,12 @@ class Administrador(db.Model, UserMixin):
     def get_id(self):
         return (self.dni_admin)
 
-    def __repr__(self):
-        return "Administrador: {}".format(self.dni_admin)
-
     def insert(self):
         try:
             db.session.add(self)
             db.session.commit()
+            return self.dni_admin
+
         except:
             db.session.rollback()
         finally:
@@ -58,7 +56,7 @@ class Administrador(db.Model, UserMixin):
         try:
             db.session.commit()
         except:
-            db.sesion.rollback()
+            db.session.rollback()
         finally:
             db.session.close()
 
@@ -70,6 +68,9 @@ class Administrador(db.Model, UserMixin):
             db.session.rollback()
         finally:
             db.session.close()
+
+    def __repr__(self):
+        return f'Administrador: dni_admin={self.dni_admin}, nombres={self.nombres}, apellidos={self.apellidos}, correo={self.correo}'
 
 class Empleado(db.Model):
     dni_empleado = db.Column(db.String(8), primary_key = True)
