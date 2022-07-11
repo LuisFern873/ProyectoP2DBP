@@ -49,7 +49,14 @@ class TestTamboApi(unittest.TestCase):
             'nombres': 'update',
             'apellidos': 'empleado',
             'genero': 'm'
-        }       
+        }
+
+        self.empleado_delete =  {
+            'dni_empleado': '10000000',
+            'nombres': 'delete',
+            'apellidos': 'empleado',
+            'genero': 'm'
+        }                  
 
     #------------ADMINISTRADORES-----------------#
     def test_register_admin_failed(self):
@@ -147,7 +154,16 @@ class TestTamboApi(unittest.TestCase):
         self.assertEqual(data['message'], 'Resource Not Found')     
 
     def test_delete_empleado_success(self):
-        pass
+        res0 = self.client().post('/empleados/new_empleado', json = self.empleado_delete)
+        data0 = json.loads(res0.data)
+        deleted_dni = data0['empleado']
+
+        res = self.client().delete('/empleados/delete_empleado/' + str(deleted_dni))
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['empleado_deleted'])
 
     #------------ASIGNACION-DE-TAREAS----------#
 
