@@ -325,7 +325,7 @@ form .button input:hover {
 #changepassword {
   width: 100%;
   padding: 20px;
-  background-color: #ff9f21; /* Red */
+  background-color: #ff9f21;
   color: white;
   margin-bottom: 30px;
   border-radius: 5px;

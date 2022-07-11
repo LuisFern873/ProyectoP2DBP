@@ -1,11 +1,10 @@
 from flask import Flask, jsonify, abort, request
 from flask_cors import CORS
-from sqlalchemy import true
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, current_user, login_required, logout_user
 from flask_login import LoginManager
 from models import setup_db, db, datetime, Administrador, Empleado, Tarea
 import json
+import jwt
 
 # Environment variables
 # $env:FLASK_APP = "server"
@@ -89,9 +88,11 @@ def create_app(test_config = None):
             admin = Administrador.query.filter_by(dni_admin = dni_admin).first()
 
             if admin is not None and check_password_hash(admin.password, password):
-                login_user(admin)
                 response['success'] = True
                 response['admin'] = admin.format()
+                response['token']  = jwt.encode({
+                    'dni_admin': dni_admin
+                }, app.config['SECRET_KEY'])
             else:
                 response['success'] = False
                 response['message'] = 'Incorrect dni/password combination'

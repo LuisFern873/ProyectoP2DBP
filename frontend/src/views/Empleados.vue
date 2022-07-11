@@ -23,7 +23,7 @@
         </button>
       </router-link>
       <router-link to="/login">
-        <button id="show-form" class="boton-anadir" role="button">Logout</button>
+        <button id="show-form" @click="logout" class="boton-anadir" role="button">Logout</button>
       </router-link>
     </div>
     <div v-for="(empleado, index) in empleados" :key="index" class="container">
@@ -67,6 +67,7 @@ export default {
   data() {
     return {
       empleados: [],
+      currentUserDni: "",
 
       showAnadir: false,
       showAsignar: false,
@@ -85,9 +86,6 @@ export default {
 
   props: {
     currentUser: {
-      type: String,
-    },
-    currentUserDni: {
       type: String,
     },
   },
@@ -120,6 +118,12 @@ export default {
           console.log(error);
         });
     },
+    
+    // Logout
+    logout(){
+      localStorage.clear();
+      this.$router.push("/login");
+    },
 
     // POP-UP FORMS
     toggleFormAnadir() {
@@ -140,7 +144,14 @@ export default {
   },
 
   created() {
-    this.getEmpleados();
+    if(localStorage.getItem("token")){
+      this.getEmpleados();
+      this.currentUserDni = localStorage.getItem("admin");
+
+    } else {
+      this.$router.push("/login");
+    }
+    
   },
 };
 </script>

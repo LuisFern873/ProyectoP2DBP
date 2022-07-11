@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="center">
-      <h1>{{ title }}</h1>
+      <h1>Login</h1>
 
       <form id="form-login" @submit.prevent="handleSubmit">
         <div class="txt_field">
@@ -34,7 +34,7 @@
       <span class="closebtn" onclick="this.parentElement.style.display='none';"
         >&times;</span
       >
-      ¡Algo salió mal!
+      ¡Algo salió mal! Inténtelo de nuevo.
     </div>
 
     <!-- Welcome (Admin registrado correctamente) -->
@@ -54,10 +54,8 @@ export default {
   name: "Login",
   data() {
     return {
-      title: "Login",
       dni: "",
       password: "",
-
       passwordAlert: false,
       errorAlert: false,
     };
@@ -85,11 +83,13 @@ export default {
       console.log("Data: ", data);
 
       if (data["success"]) {
+        localStorage.setItem("token", data["token"]);
+        localStorage.setItem("admin", data["admin"]["dni_admin"]);
+
         this.$router.push({
           name: "empleados",
           params: {
             currentUser: data["admin"]["nombres"] + " " + data["admin"]["apellidos"],
-            currentUserDni: data["admin"]["dni_admin"]
           },
         });
       } else {

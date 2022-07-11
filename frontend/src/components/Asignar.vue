@@ -42,24 +42,22 @@ export default {
                 'Content-Type': 'application/json'
             }
 
-            const response = await 
-            axios
-              .post(path, {
-                body: JSON.stringify({
+            const response = await fetch(path, {
+              method: "POST",
+              body: JSON.stringify({
                   titulo: this.titulo,
                   descripcion: this.descripcion,
-                }),
-              }, {
-                headers: headers,
-              })
-              .then((response) => {
-                console.log(response);
-                this.showForm = false;
-              })
-              .catch((error) => {
-                console.log(error);
-                this.fshowForm = false;
-              });
+              }),
+              headers: headers,
+            })
+            .then((response) => {
+              console.log(response);
+              this.showForm = false;
+            })
+            .catch((error) => {
+              console.log(error);
+              this.fshowForm = false;
+            });
         },
 
         closeForm(){
