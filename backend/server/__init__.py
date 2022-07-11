@@ -130,47 +130,39 @@ def create_app(test_config = None):
 
     @app.route('/empleados/new_empleado', methods=["POST"])
     def new_empleado():
-        error = False
+        error_422 = False
         try:
-            body = request.get_json()['body']
-            
-            print(type(body)) # STRING
-            
-            data = json.loads(body)
+            body = request.get_json()
+                       
+            dni_empleado = body.get('dni_empleado')
+            nombres = body.get('nombres')
+            apellidos = body.get('apellidos') 
+            genero = body.get('genero')
 
-            dni_empleado = data['dni_empleado']
-            nombres = data['nombres']
-            apellidos = data['apellidos']
-            genero = data['genero']
-            admin = data['admin']
+            if dni_empleado is None or nombres is None or apellidos is None or genero is None:
+                error_422 = True
+                abort(422)
 
             empleado = Empleado(
                 dni_empleado = dni_empleado,
                 nombres = nombres,
                 apellidos = apellidos,
-                genero = genero,
-                admin = admin
+                genero = genero
             )
 
-            db.session.add(empleado)
-            db.session.commit()
+            new_empleado_dni = empleado.insert()
 
-        except Exception as exp:
-            db.session.rollback()
-            error = True
-            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-            message = template.format(type(exp).__name__, exp.args)
-            print(message)
-        finally:
-            db.session.close()
-
-        if error:
-            abort(500)
-        else:
             return jsonify({
                 'success': True,
-                'Empleado': empleado.format()
+                'empleado': new_empleado_dni
             })
+
+        except Exception as exp:
+            print(exp)
+            if error_422:
+                abort(422)
+            else:   
+                abort(500)
 
     @app.route('/empleados/delete_empleado/<dni>', methods=['DELETE'])
     def delete_empleado(dni):
