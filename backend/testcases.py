@@ -58,6 +58,19 @@ class TestTamboApi(unittest.TestCase):
             'genero': 'm'
         }                  
 
+        self.empleado_asignatask1 =  {
+            'dni_empleado': '10001000',
+            'nombres': 'assign',
+            'apellidos': 'task',
+            'genero': 'm'
+        } 
+
+        self.tarea_failure = {
+            'id_tarea': None,
+            'titulo': None,
+            'descripcion': None
+        }        
+
     #------------ADMINISTRADORES-----------------#
     def test_register_admin_failed(self):
         res = self.client().post('/register/register_admin', json = self.admin_failure)
@@ -168,7 +181,16 @@ class TestTamboApi(unittest.TestCase):
     #------------ASIGNACION-DE-TAREAS----------#
 
     def test_assign_tarea_failed(self):
-        pass
+        res0 = self.client().post('/empleados/new_empleado', json = self.empleado_asignatask1)
+        data0 = json.loads(res0.data)
+        assigned_dni = data0['empleado']
+
+        res = self.client().post('/empleados/asignar_tarea/' + str(assigned_dni), json = self.tarea_failure)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unprocessable')
 
     def test_assign_tarea_success(self):
         pass
