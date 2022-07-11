@@ -119,7 +119,7 @@ port = 8080
 
 ## Forma de autenticación:
 
-Para la autenticación de administradores se hizo uso de la libreria jwt que permite la creación de tokenes cuando el inicio de sesión ha sido exitosa. A continuación, se presenta el código que realiza el proceso de autenticación mediante el formulario "login". En este se verifica que el dni ingresado pertenezca a un usuario registrado en la base de datos y que la contraseña ingresada coincida con la contraseña encriptada registrada como atributo de ese mismo usuario. Si esto se cumple, el backend envia como respuesta datos del administrador que ha iniciado sesión, y el token correspodiente. Desde VUE, se guarda el token en Local Storage. Finalmente, se verifica que el token se encuentre presente en el Local Storage para obtener acceso a las vistas de empleado y tarea. 
+Para la autenticación de administradores se hizo uso de la libreria jwt que permite la creación de tokenes cuando el inicio de sesión ha sido exitosa. A continuación, se presenta el código que realiza el proceso de autenticación mediante el formulario "login". En este se verifica que el dni ingresado pertenezca a un usuario registrado en la base de datos y que la contraseña ingresada coincida con la contraseña encriptada registrada como atributo de ese mismo usuario. Si esto se cumple, el backend envia como respuesta datos del administrador que ha iniciado sesión, y el token correspodiente. Desde VUE, se guarda el token en Local Storage. Finalmente, se verifica que el token este presente en el Local Storage para obtener acceso a las vistas de empleado y tarea. 
 
 ```python
 @app.route('/login/log_admin', methods = ['POST'])

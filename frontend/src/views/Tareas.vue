@@ -73,7 +73,11 @@ export default {
   },
 
   created() {
-    this.getTareas();
+    if(localStorage.getItem("token")){
+      this.getTareas();
+    } else {
+      this.$router.push("/login");
+    }
   },
 };
 </script>
