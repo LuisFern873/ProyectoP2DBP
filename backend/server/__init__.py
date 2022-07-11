@@ -236,33 +236,43 @@ def create_app(test_config = None):
             'tareas': [tarea.format() for tarea in tareas]
         })
 
-    @app.route('/empleados/asignar_tarea/<dni>', methods = ['POST'])
-    def asignar_tarea(dni):
-        # Recuperar datos de la tarea
-        titulo = request.get_json()["titulo"]
-        descripcion = request.get_json()["descripcion"]
+    @app.route('/empleados/asignar_tarea/<dni_empleado>', methods = ['POST'])
+    def asignar_tarea(dni_empleado):
+        error_422 = False
+        error_404 = False
 
-        # Empleado al que le vamos a asignar la tarea
-        empleado = Empleado.query.filter_by(dni_empleado = dni).first()
+        # Empleado asignado para la tarea
+        empleado = Empleado.query.filter_by(dni_empleado = dni_empleado).first()
 
         if empleado is None:
+            error_404 = True
             abort(404)
 
-        # Creamos la tarea
+        # Recuperando datos de la tarea
+        body = request.get_json()
+
+        id_tarea = body.get('id_tarea')
+        titulo = body.get('titulo')
+        descripcion = body.get('descripcion', None)
+
+        if titulo is None:
+            error_422 = True
+            abort(422)
+        
+        # Creando la tarea
         tarea = Tarea(
+            id_tarea = id_tarea,
             titulo = titulo,
             descripcion = descripcion,
             completo = False,
             empleado = empleado
-        )
-        # Añadimos la tarea
-        db.session.add(tarea)
-        db.session.commit()
+        ) 
 
-        # Respuesta
+        tarea.insert()
+
         return jsonify({
-            'success': True, 
-            'tarea': tarea.format()
+            'success': True,
+            'assigned': id_tarea
         })
 
     @app.route('/tareas/update_tarea/<id>', methods = ['PATCH'])
