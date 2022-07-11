@@ -35,6 +35,13 @@ class TestTamboApi(unittest.TestCase):
             'nombres': None,
             'apellidos': None,
             'genero': None
+        }
+
+        self.empleado_successful =  {
+            'dni_empleado': '77776543',
+            'nombres': 'Emple',
+            'apellidos': 'Ado',
+            'genero': 'f'
         }   
 
     #------------ADMINISTRADORES-----------------#
@@ -81,7 +88,12 @@ class TestTamboApi(unittest.TestCase):
         self.assertEqual(data['message'], 'Unprocessable') 
 
     def test_create_empleado_success(self):
-        pass
+        res = self.client().post('/empleados/new_empleado', json = self.empleado_successful)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['empleado'])  
 
     def test_get_empleados_failed(self):
         pass
