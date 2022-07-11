@@ -2,7 +2,7 @@
   <div class="popup-form" v-if="showForm">
     <div class="popup">
       <div class="closebtn" @click="CloseForm">&times;</div>
-      <form class="form" id="form-add" @submit.prevent="handleSubmit(admin)">
+      <form class="form" id="form-add" @submit.prevent="handleSubmit">
         <h2>Ingrese los datos del empleado</h2>
         <div class="form-element">
           <label for="dni">Dni:</label>
@@ -82,7 +82,7 @@ export default {
   props: ['admin'],
 
   methods: {
-    handleSubmit(admin) {
+    handleSubmit() {
 
       const path = "http://127.0.0.1:5000/empleados/new_empleado";
 
@@ -91,12 +91,14 @@ export default {
         "Content-Type": "application/json",
       };
 
+      console.log("ADMIN:", this.admin);
+
       var data = JSON.stringify({
         dni_empleado: this.dni_empleado,
         nombres: this.nombres,
         apellidos: this.apellidos,
         genero: this.genero,
-        admin: admin,
+        admin: this.admin,
       });
 
       axios
@@ -116,6 +118,10 @@ export default {
     CloseForm() {
       this.showForm = false;
     },
+
+    created(){
+      console.log("CURRENT: ", this.currentUserDni);
+    }
   },
 };
 </script>

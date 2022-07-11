@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       empleados: [],
-      currentUserDni: "",
+      currentUserDni: null,
 
       showAnadir: false,
       showAsignar: false,
@@ -147,6 +147,7 @@ export default {
     if(localStorage.getItem("token")){
       this.getEmpleados();
       this.currentUserDni = localStorage.getItem("admin");
+      console.log(this.currentUserDni);
 
     } else {
       this.$router.push("/login");
@@ -158,7 +159,7 @@ export default {
 
 <style scoped>
 .empleados {
-  height: 100%;
+  height: calc(100vh + 1000px);
   background: -webkit-linear-gradient(
       to right,
       hsla(220, 52%, 70%, 0.863),

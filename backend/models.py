@@ -77,10 +77,9 @@ class Empleado(db.Model):
     nombres = db.Column(db.String(50), nullable = False)
     apellidos = db.Column(db.String(50), nullable = False)
     genero = db.Column(db.String(1), nullable = False)
-
     fecha_anadido = db.Column(db.DateTime(), default = datetime.now)
     fecha_modificado = db.Column(db.DateTime(), nullable = True, default=None)
-
+    admin = db.Column(db.String(8), db.ForeignKey('administrador.dni_admin'))
     tareas = db.relationship('Tarea', backref = 'empleado')
 
     def format(self):
@@ -90,7 +89,8 @@ class Empleado(db.Model):
             'apellidos': self.apellidos,
             'genero': self.genero,
             'fecha_anadido': self.fecha_anadido,
-            'fecha_modificado': self.fecha_modificado
+            'fecha_modificado': self.fecha_modificado,
+            'admin': self.admin,
         }
 
     def insert(self):

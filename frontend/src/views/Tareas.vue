@@ -91,7 +91,7 @@ export default {
     padding: 0;
     font-family: 'Poppins',sans-serif;
     background: linear-gradient(120deg, #2980b9, #8e44ad);
-    height: calc(100%);
+    height: calc(100vh + 1000px);
     
     background: -webkit-linear-gradient(to right, hsla(220, 52%, 70%, 0.863), hsla(274, 45%, 71%, 0.808)), url(../assets/Tambo-portada.jpg);
     background: linear-gradient(to right, #8ca6dbd0, #b993d6bd), url(../assets/Tambo-portada.jpg); 
