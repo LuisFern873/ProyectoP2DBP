@@ -44,6 +44,7 @@ Para el front-end se utilizaron las siguientes tecnologías:
 
 Para el back-end se utilizaron las siguientes tecnologías:
 
+- python
 - flask
 - SQLalchemy
 - jwt (para generar tokens y autenticar usuarios)
