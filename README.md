@@ -46,8 +46,7 @@ Para el back-end se utilizaron las siguientes tecnologías:
 
 - flask
 - SQLalchemy
-- flask_migrate
-- flask_login
+- jwt (para generar tokens y autenticar usuarios)
 - werkzeug.security (encriptación de contraseñas)
 
 ### Base de datos:
@@ -120,39 +119,37 @@ port = 8080
 
 ## Forma de autenticación:
 
-Para la autenticación de administradores se hizo uso del conocido módulo flask_login. Este permite que el acceso a los datos de empleados y tareas este restringido solo para los administradores que hayan iniciado sesión (logeados). A continuación, se presenta el código que realiza el proceso de autenticación mediante el formulario "login". En este se verifica que el dni ingresado pertenezca a un usuario registrado en la base de datos y que la contraseña ingresada coincida con la contraseña encriptada registrada como atributo de ese mismo usuario. Si esto se cumple, se procede a iniciar la sesión.
+Para la autenticación de administradores se hizo uso de la libreria jwt que permite la creación de tokenes cuando el inicio de sesión ha sido exitosa. A continuación, se presenta el código que realiza el proceso de autenticación mediante el formulario "login". En este se verifica que el dni ingresado pertenezca a un usuario registrado en la base de datos y que la contraseña ingresada coincida con la contraseña encriptada registrada como atributo de ese mismo usuario. Si esto se cumple, el backend envia como respuesta datos del administrador que ha iniciado sesión, y el token correspodiente. Desde VUE, se guarda el token en Local Storage. Finalmente, se verifica que el token se encuentre presente en el Local Storage para obtener acceso a las vistas de empleado y tarea. 
 
 ```python
-    @app.route('/login/log_admin', methods = ['POST'])
-    def log_admin():
-        response = {}
-        error = False
-
-        try:
-            dni_admin = request.get_json()['dni']
-            password = request.get_json()['password']
-            admin = Administrador.query.filter_by(dni_admin = dni_admin).first()
-
-            if admin is not None and check_password_hash(admin.password, password):
-                login_user(admin)
-                response['success'] = True
-                response['admin'] = admin.format()
-            else:
-                response['success'] = False
-                response['message'] = 'Incorrect dni/password combination'
-
-        except Exception as exp:
-            error = True
-            response['success'] = False
-            response['message'] = 'Exception is raised'
-            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-            message = template.format(type(exp).__name__, exp.args)
-            print(message)
-
-        if error:
-            abort(500)
+@app.route('/login/log_admin', methods = ['POST'])
+def log_admin():
+    response = {}
+    error = False
+    try:
+        dni_admin = request.get_json()['dni']
+        password = request.get_json()['password']
+        admin = Administrador.query.filter_by(dni_admin = dni_admin).first()
+        if admin is not None and check_password_hash(admin.password, password):
+            response['success'] = True
+            response['admin'] = admin.format()
+            response['token']  = jwt.encode({
+                'dni_admin': dni_admin
+            }, app.config['SECRET_KEY'])
         else:
-            return jsonify(response)
+            response['success'] = False
+            response['message'] = 'Incorrect dni/password combination'
+    except Exception as exp:
+        error = True
+        response['success'] = False
+        response['message'] = 'Exception is raised'
+        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+        message = template.format(type(exp).__name__, exp.args)
+        print(message)
+    if error:
+        abort(500)
+    else:
+        return jsonify(response)
 ```
 
 ## Manejo de errores HTTP:

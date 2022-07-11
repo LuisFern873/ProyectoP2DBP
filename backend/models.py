@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
 from datetime import datetime
 
 db = SQLAlchemy()
@@ -20,7 +19,7 @@ def setup_db(app, database_path = database_path):
     db.init_app(app)
     db.create_all()
 
-class Administrador(db.Model, UserMixin):
+class Administrador(db.Model):
     dni_admin = db.Column(db.String(8), primary_key = True)
     nombres = db.Column(db.String(100), nullable = False)
     apellidos = db.Column(db.String(100), nullable = False)

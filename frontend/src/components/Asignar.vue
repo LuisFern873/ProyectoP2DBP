@@ -36,7 +36,7 @@ export default {
 
     methods: {
         async AsignarTarea(empleado){
-            const path = "http://127.0.0.1:5000/asignar_tarea/" + empleado;
+            const path = "http://127.0.0.1:5000/empleados/asignar_tarea/" + empleado;
 
             const headers = {
                 'Content-Type': 'application/json'

@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, abort, request
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager
 from models import setup_db, db, datetime, Administrador, Empleado, Tarea
 import json
 import jwt
@@ -13,8 +12,6 @@ import jwt
 
 def create_app(test_config = None):
     app = Flask(__name__)
-    login_admin = LoginManager(app)
-    login_admin.init_app(app)
 
     setup_db(app)
     app.config['SECRET_KEY'] = "12345"
@@ -26,10 +23,6 @@ def create_app(test_config = None):
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorizations, true')
         response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS')
         return response
-
-    @login_admin.user_loader
-    def admin_loader(dni):
-        return Administrador.query.get(str(dni))
 
     @app.route('/register/register_admin', methods=["POST"])
     def register_admin():
