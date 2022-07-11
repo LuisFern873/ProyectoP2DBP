@@ -228,7 +228,12 @@ class TestTamboApi(unittest.TestCase):
         self.assertNotEqual(data['tareas'], 'Internal Server Error')
 
     def test_get_tareas_success(self):
-        pass
+        res = self.client().get('/tareas')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['tareas'])
 
     def test_update_tareas_failed(self):
         pass
