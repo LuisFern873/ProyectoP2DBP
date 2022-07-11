@@ -1,3 +1,4 @@
+from email.policy import default
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -26,7 +27,6 @@ class Administrador(db.Model):
     correo = db.Column(db.String(100), unique = True, nullable = False)
     password = db.Column(db.String(300), nullable = False)
     fecha_anadido = db.Column(db.DateTime(), default = datetime.now)
-    empleados = db.relationship('Empleado', backref = 'administrador')
 
     def format(self):
         return {
@@ -41,13 +41,12 @@ class Administrador(db.Model):
     def get_id(self):
         return (self.dni_admin)
 
-    def __repr__(self):
-        return "Administrador: {}".format(self.dni_admin)
-
     def insert(self):
         try:
             db.session.add(self)
             db.session.commit()
+            return self.dni_admin
+
         except:
             db.session.rollback()
         finally:
@@ -57,7 +56,7 @@ class Administrador(db.Model):
         try:
             db.session.commit()
         except:
-            db.sesion.rollback()
+            db.session.rollback()
         finally:
             db.session.close()
 
@@ -70,6 +69,9 @@ class Administrador(db.Model):
         finally:
             db.session.close()
 
+    def __repr__(self):
+        return f'Administrador: dni_admin={self.dni_admin}, nombres={self.nombres}, apellidos={self.apellidos}, correo={self.correo}'
+
 class Empleado(db.Model):
     dni_empleado = db.Column(db.String(8), primary_key = True)
     nombres = db.Column(db.String(50), nullable = False)
@@ -77,10 +79,9 @@ class Empleado(db.Model):
     genero = db.Column(db.String(1), nullable = False)
 
     fecha_anadido = db.Column(db.DateTime(), default = datetime.now)
-    fecha_modificado = db.Column(db.DateTime(), nullable = True)
+    fecha_modificado = db.Column(db.DateTime(), nullable = True, default=None)
 
     tareas = db.relationship('Tarea', backref = 'empleado')
-    admin = db.Column(db.String(8), db.ForeignKey('administrador.dni_admin'))
 
     def format(self):
         return {
@@ -89,17 +90,15 @@ class Empleado(db.Model):
             'apellidos': self.apellidos,
             'genero': self.genero,
             'fecha_anadido': self.fecha_anadido,
-            'fecha_modificado': self.fecha_modificado,
-            'admin': self.admin
+            'fecha_modificado': self.fecha_modificado
         }
-
-    def __repr__(self):
-        return "Empleado: {}".format(self.dni_empleado)
 
     def insert(self):
         try:
             db.session.add(self)
             db.session.commit()
+            return self.dni_empleado
+
         except:
             db.session.rollback()
         finally:
@@ -109,7 +108,7 @@ class Empleado(db.Model):
         try:
             db.session.commit()
         except:
-            db.sesion.rollback()
+            db.session.rollback()
         finally:
             db.session.close()
 
@@ -122,6 +121,8 @@ class Empleado(db.Model):
         finally:
             db.session.close()  
     
+    def __repr__(self):
+        return f'Empleado: dni_empleado={self.dni_empleado}, nombres={self.nombres}, apellidos={self.apellidos}, genero={self.genero}, fecha_añadido={self.fecha_anadido}'
 
 class Tarea(db.Model):
     id_tarea = db.Column(db.Integer, primary_key = True)
@@ -139,13 +140,11 @@ class Tarea(db.Model):
             'asignado': self.asignado
         }
 
-    def __repr__(self):
-        return "Tarea: {}".format(self.id_tarea)
-
     def insert(self):
         try:
             db.session.add(self)
             db.session.commit()
+            return self.id_tarea
         except:
             db.session.rollback()
         finally:
@@ -155,7 +154,7 @@ class Tarea(db.Model):
         try:
             db.session.commit()
         except:
-            db.sesion.rollback()
+            db.session.rollback()
         finally:
             db.session.close()
 
@@ -168,4 +167,5 @@ class Tarea(db.Model):
         finally:
             db.session.close()
 
-
+    def __repr__(self):
+        return f'Tarea: id_tarea={self.id_tarea}, titulo={self.titulo}, descripcion={self.descripcion}, completado={self.completo}, asignado={self.asignado}'
