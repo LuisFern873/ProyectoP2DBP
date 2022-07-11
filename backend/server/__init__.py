@@ -275,20 +275,32 @@ def create_app(test_config = None):
             'assigned': id_tarea
         })
 
-    @app.route('/tareas/update_tarea/<id>', methods = ['PATCH'])
-    def update_tarea(id):
-        # Tarea que va ser completada
-        tarea = Tarea.query.filter_by(id_tarea = id)
-        if tarea is None:
-            abort(404)
-        # Tarea marcada como completa
-        tarea.update({'completo': True})
-        db.session.commit()
+    @app.route('/tareas/update_tarea/<id_tarea>', methods = ['PATCH'])
+    def update_tarea(id_tarea):
+        error_404 = False
 
-        return jsonify({
-            'success': True,
-            'tarea': tarea.format()
-        })
+        try:
+            # Buscamos la tarea
+            tarea = Tarea.query.filter_by(id_tarea = id_tarea).one_or_none()
+            
+            if tarea is None:
+                abort(404)
+            
+            # Marcamos como completa a la tarea
+            tarea.completo = True
+            tarea.update()
+
+            return jsonify({
+                'success': True,
+                'tarea_updated': id_tarea
+            })
+        
+        except Exception as exp:
+            print(exp)
+            if error_404:
+                abort(404)
+            else:
+                abort(500)
 
     @app.errorhandler(500)
     def server_error(error):
