@@ -98,6 +98,8 @@ class Empleado(db.Model):
         try:
             db.session.add(self)
             db.session.commit()
+            return self.dni_empleado
+
         except:
             db.session.rollback()
         finally:
@@ -139,13 +141,11 @@ class Tarea(db.Model):
             'asignado': self.asignado
         }
 
-    def __repr__(self):
-        return "Tarea: {}".format(self.id_tarea)
-
     def insert(self):
         try:
             db.session.add(self)
             db.session.commit()
+            return self.id_tarea
         except:
             db.session.rollback()
         finally:
@@ -155,7 +155,7 @@ class Tarea(db.Model):
         try:
             db.session.commit()
         except:
-            db.sesion.rollback()
+            db.session.rollback()
         finally:
             db.session.close()
 
@@ -168,4 +168,5 @@ class Tarea(db.Model):
         finally:
             db.session.close()
 
-
+    def __repr__(self):
+        return f'Tarea: id_tarea={self.id_tarea}, titulo={self.titulo}, descripcion={self.descripcion}, completado={self.completo}, asignado={self.asignado}'
