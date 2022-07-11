@@ -112,7 +112,12 @@ class TestTamboApi(unittest.TestCase):
         self.assertTrue(data['empleados'])
 
     def test_update_empleado_failed(self):
-        pass
+        res = self.client().patch('/empleados/update_empleado/00001111')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Resource Not Found')
 
     def test_update_empleado_success(self):
         pass
