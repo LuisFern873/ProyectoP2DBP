@@ -48,7 +48,12 @@ class TestTamboApi(unittest.TestCase):
         self.assertTrue(data['created'])
 
     def test_login_admin_failed(self):
-        pass
+        res = self.client().post('/login/log_admin', json = self.admin_failure)
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unprocessable')
 
     def test_login_admin_success(self):
         pass
