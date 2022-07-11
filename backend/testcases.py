@@ -30,6 +30,13 @@ class TestTamboApi(unittest.TestCase):
                 'cpassword': '1234' 
             }        
 
+        self.empleado_failure =  {
+            'dni_empleado': None,
+            'nombres': None,
+            'apellidos': None,
+            'genero': None
+        }   
+
     #------------ADMINISTRADORES-----------------#
     def test_register_admin_failed(self):
         res = self.client().post('/register/register_admin', json = self.admin_failure)
@@ -66,7 +73,12 @@ class TestTamboApi(unittest.TestCase):
 
     #---------------EMPLEADOS--------------------#
     def test_create_empleado_failed(self):
-        pass
+        res = self.client().post('/empleados/new_empleado', json = self.empleado_failure)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unprocessable') 
 
     def test_create_empleado_success(self):
         pass
