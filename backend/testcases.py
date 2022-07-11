@@ -220,7 +220,12 @@ class TestTamboApi(unittest.TestCase):
     #-------------------TAREAS-------------------#
 
     def test_get_tareass_failed(self):
-        pass
+        res = self.client().get('/tareas?id_=0000000000000')
+        data = json.loads(res.data)
+
+        self.assertNotEqual(res.status_code, 500)
+        self.assertNotEqual(data['success'], False)
+        self.assertNotEqual(data['tareas'], 'Internal Server Error')
 
     def test_get_tareas_success(self):
         pass
