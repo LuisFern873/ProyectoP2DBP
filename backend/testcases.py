@@ -69,6 +69,19 @@ class TestTamboApi(unittest.TestCase):
             'id_tarea': None,
             'titulo': None,
             'descripcion': None
+        }
+
+        self.empleado_asignatask2 =  {
+            'dni_empleado': '10000001',
+            'nombres': 'assign',
+            'apellidos': 'task2',
+            'genero': 'm'
+        }
+
+        self.tarea_succesful = {
+            'id_tarea': 1,
+            'titulo': 'Comer agua',
+            'descripcion': 'Vaya a comer agua o sera despedido'
         }        
 
     #------------ADMINISTRADORES-----------------#
@@ -193,7 +206,16 @@ class TestTamboApi(unittest.TestCase):
         self.assertEqual(data['message'], 'Unprocessable')
 
     def test_assign_tarea_success(self):
-        pass
+        res0 = self.client().post('/empleados/new_empleado', json = self.empleado_asignatask2)
+        data0 = json.loads(res0.data)
+        assigned_dni = data0['empleado']
+
+        res = self.client().post('/empleados/asignar_tarea/' + str(assigned_dni), json = self.tarea_succesful)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['assigned'])
 
     #-------------------TAREAS-------------------#
 
